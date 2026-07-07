@@ -277,10 +277,11 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
   const LS_SOURCES = 'inv_sources_v2';
   const LS_BRANCHES = 'inv_branches_v1';
 
-  // Pre-loaded starting data (from the last file uploaded), so the app shows
+  // Pre-loaded starting data (from the last files uploaded), so the app shows
   // something useful immediately without requiring an upload on first open.
   // Overwritten as soon as a real file is uploaded on this device.
-  const SEED_DATA = {"Идаванг":{"PRVgB":1648,"PRRSvXR":1678,"Hps":728,"App ApxIV":408,"RF21":4},"Тропарево":{"Mhyo":800,"PRRSvXR":1678,"App ApxIV":408},"МерсиТрейд":{"PCV2":512},"Кобб-Раша":{"Salm D":776}};
+  const SEED_DATA = {"Идаванг":{"PRVgB":1648,"PRRSvXR":1678,"Hps":728,"App ApxIV":408,"RF21":4},"Тропарево":{"Mhyo":800,"PRRSvXR":1678,"App ApxIV":408},"МерсиТрейд":{"PCV2":512},"Кобб-Раша":{"Salm D":776,"IBV":94,"REO":356,"IBD":100,"Mg":36,"Ms":36},"ООО \"Эпсилон-Био Москва\"":{"PRRS-XR":2472,"PRVgB":480,"PCV":576,"IBD":768,"IBV":1288,"Mg":542,"Ms":550,"ART":376,"ORT":48,"BLS":480,"REO":594,"CSF":440,"Sal.Gp B/C1/D":1440,"ILT":472,"CAV":960,"FAdV":480,"NDV":560,"AE":53,"EDS":480,"Salm.Gp B":480,"REF 23 (5мл)":1,"REF 22 (5мл)":1},"Агро-Белогорье":{"PRRS":708},"БВК-Глобал":{"PRRS":30,"PCV":60},"АПК Промагро":{"PRRS":77,"б.Ауески gB":77},"ПФ Чернухинская":{"ИББ":72,"ИБК":72},"АО Агрофирма Русь":{"ИББ":58,"IBD":124,"IBV":214,"ART":36,"ILT":36},"Агроэко-Воронеж":{"PRRS":18},"ТД ВИК за Троицкое":{"ЦВИС":90},"Егорьевская ПТФ":{"SalmB":36},"Агроэко-Восток":{"PRRS":447,"Mhyo":10},"СПК Ширяева":{"IBD":36},"Донская Индейка":{"Mg":25,"Ms":25,"AE":50,"NDV":25,"ART":25},"ООО Агросфера":{"IBD":36,"IBV":36},"ООО Белянка":{"IBD":83,"NDV":45,"IBV":138,"ART":138,"AE":45,"ILT":48,"Mg":48},"ООО АгроРусь":{"IBD":18,"NDV":18},"ООО ПензаМолИнвест":{"IBD":144},"ООО ТопАгро":{"PRRS":302},"ООО Грайворонский СК-1":{"РРСС":165},"ООО Грайворонский СК-2":{"РРСС":140},"ООО \"СХ Каменка\"":{"РРСС":62}};
+  const SEED_BRANCHES = {"Идаванг":"Белгород","Тропарево":"Белгород","МерсиТрейд":"Белгород","Кобб-Раша":"Белгород","ООО \"Эпсилон-Био Москва\"":"Москва","Агро-Белогорье":"Белгород","БВК-Глобал":"Белгород","АПК Промагро":"Белгород","ПФ Чернухинская":"Белгород","АО Агрофирма Русь":"Белгород","Агроэко-Воронеж":"Белгород","ТД ВИК за Троицкое":"Белгород","Егорьевская ПТФ":"Белгород","Агроэко-Восток":"Белгород","СПК Ширяева":"Белгород","Донская Индейка":"Белгород","ООО Агросфера":"Белгород","ООО Белянка":"Белгород","ООО АгроРусь":"Белгород","ООО ПензаМолИнвест":"Белгород","ООО ТопАгро":"Белгород","ООО Грайворонский СК-1":"Белгород","ООО Грайворонский СК-2":"Белгород","ООО \"СХ Каменка\"":"Белгород"};
   const SEED_DATE = '07.07.2026';
 
   let grouped = {};   // { client: { kit: amount } }
@@ -324,6 +325,7 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
         if(b) branches = JSON.parse(b);
       } else {
         grouped = JSON.parse(JSON.stringify(SEED_DATA));
+        branches = JSON.parse(JSON.stringify(SEED_BRANCHES));
         sources = [{client:'', file:'встроенные данные', date: SEED_DATE}];
       }
       renderMeta();
