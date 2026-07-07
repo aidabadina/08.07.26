@@ -370,6 +370,18 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
     return '';
   }
 
+  // Branch couldn't be auto-detected from the file - ask once per file,
+  // applied to every client/bucket that file contributes (instead of
+  // tagging each card by hand).
+  function promptForBranch(fileName){
+    const answer = prompt(
+      'Не удалось определить филиал по файлу "' + fileName + '".\n' +
+      'Введите филиал (Москва / Белгород) или оставьте пустым, чтобы указать позже:', ''
+    );
+    const trimmed = (answer || '').trim().toLowerCase();
+    return BRANCHES.find(b => b.toLowerCase() === trimmed) || '';
+  }
+
   // ---- file reading ----
 
   fileInput.addEventListener('change', function(e){
@@ -451,7 +463,7 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
     const detection = findHeaderRow(aoa);
 
     if(detection.type === 'flat'){
-      const branch = detectBranch(aoa, detection.rowIdx);
+      const branch = detectBranch(aoa, detection.rowIdx) || promptForBranch(fileName);
       mergeFlatFormat(aoa, detection.rowIdx, fileName, branch);
       saveState();
       render();
@@ -465,11 +477,11 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
       const totalCol = colIndexMatching(headerRow, /итог|остат/i);
       const lotCol = colIndexMatching(headerRow, /^лот$|парти/i);
       const ordinalCol = colIndexMatching(headerRow, /№|п\/п/i);
-      const branch = detectBranch(aoa, headerRowIdx);
 
       const kitsRemainder = extractPivotKits(aoa, headerRowIdx+1, kitCol, totalCol);
 
       if(Object.keys(kitsRemainder).length){
+        const branch = detectBranch(aoa, headerRowIdx) || promptForBranch(fileName);
         const clientCols = extractPivotClientCols(aoa, headerRowIdx, kitCol, totalCol, lotCol, ordinalCol);
         if(clientCols.length){
           mergeClientsFromPivot(aoa, headerRowIdx+1, kitCol, clientCols, kitsRemainder, fileName, branch);
@@ -559,7 +571,7 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
   function mergeFlatFormat(aoa, headerRowIdx, fileName, branch){
     const headerRow = aoa[headerRowIdx];
     const clientCol = colIndexMatching(headerRow, /клиент|заказчик/i);
-    const kitCol = colIndexMatching(headerRow, /набор|биочип|наименован/i);
+    const kitCol = colIndexMatching(headerRow, /набор|биочип|наименован|показател/i);
     const remainderCol = colIndexMatching(headerRow, /остат|итог/i);
     const qtyCol = colIndexMatching(headerRow, /кол-во|количество|движение|приход|расход/i);
     if(clientCol < 0 || kitCol < 0 || (remainderCol < 0 && qtyCol < 0)) return;
@@ -628,7 +640,7 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
       alert('Не нашлось ни одной строки с данными по выбранным столбцам.');
       return;
     }
-    const branch = detectBranch(pendingUnknown.aoa, headerRowIdx);
+    const branch = detectBranch(pendingUnknown.aoa, headerRowIdx) || promptForBranch(pendingUnknown.fileName);
     mergeKitsIntoClient(client, kits, pendingUnknown.fileName, branch);
     overlay.classList.remove('show');
     pendingUnknown = null;
