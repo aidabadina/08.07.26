@@ -276,6 +276,11 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
   const LS_GROUPED = 'inv_grouped_v2';
   const LS_SOURCES = 'inv_sources_v2';
   const LS_BRANCHES = 'inv_branches_v1';
+  const LS_SEED_VERSION = 'inv_seed_version_v1';
+  // Bump this whenever SEED_DATA/SEED_BRANCHES below is updated, so phones
+  // that already have older saved data pick up the new baked-in numbers
+  // instead of keeping whatever was there before.
+  const SEED_VERSION = 2;
 
   // Pre-loaded starting data (from the last files uploaded), so the app shows
   // something useful immediately without requiring an upload on first open.
@@ -316,17 +321,20 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
 
   function loadState(){
     try{
+      const storedSeedVersion = parseInt(localStorage.getItem(LS_SEED_VERSION) || '0', 10);
       const g = localStorage.getItem(LS_GROUPED);
-      const s = localStorage.getItem(LS_SOURCES);
-      const b = localStorage.getItem(LS_BRANCHES);
-      if(g){
+      if(g && storedSeedVersion >= SEED_VERSION){
         grouped = JSON.parse(g);
+        const s = localStorage.getItem(LS_SOURCES);
+        const b = localStorage.getItem(LS_BRANCHES);
         if(s) sources = JSON.parse(s);
         if(b) branches = JSON.parse(b);
       } else {
         grouped = JSON.parse(JSON.stringify(SEED_DATA));
         branches = JSON.parse(JSON.stringify(SEED_BRANCHES));
         sources = [{client:'', file:'встроенные данные', date: SEED_DATE}];
+        localStorage.setItem(LS_SEED_VERSION, String(SEED_VERSION));
+        saveState();
       }
       renderMeta();
     }catch(e){ /* ignore corrupt state */ }
