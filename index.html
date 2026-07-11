@@ -334,6 +334,17 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
     return isNaN(n) ? null : n;
   }
 
+  // True only for cells that are just a number ("84"), not a number plus a
+  // comment ("84 исп.", "5 фл (5 мл)") - those still get a usable amount via
+  // toNumber(), but are marked below so they can be shown as a line item
+  // without counting toward "Всего проб" (the client asked for this exact
+  // rule, verified against her own Excel total of 52038 for Белгород).
+  function isPureNumber(v){
+    if(v === '' || v === null || v === undefined) return false;
+    if(typeof v === 'number') return true;
+    return /^-?\d+([.,]\d+)?$/.test(String(v).trim());
+  }
+
   function loadState(){
     try{
       const storedSeedVersion = parseInt(localStorage.getItem(LS_SEED_VERSION) || '0', 10);
@@ -395,7 +406,7 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
   function toEntries(simpleKits, branch){
     const out = {};
     Object.keys(simpleKits).forEach(name => {
-      out[name] = {name, amount: simpleKits[name], lot:'', expiry:'', note:'', branch: branch||''};
+      out[name] = {name, amount: simpleKits[name], lot:'', expiry:'', note:'', branch: branch||'', commented:false};
     });
     return out;
   }
@@ -728,15 +739,19 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
       const note = noteCol >= 0 ? String(row[noteCol]||'').trim() : '';
       const key = batchKey(kit, lot, expiry, note);
       if(!byClient[client]) byClient[client] = {};
-      let amount = null;
+      let amount = null, commented = false;
       if(remainderCol >= 0){
-        amount = toNumber(row[remainderCol]);
+        const raw = row[remainderCol];
+        amount = toNumber(raw);
+        commented = amount !== null && !isPureNumber(raw);
       } else {
-        const v = toNumber(row[qtyCol]);
+        const raw = row[qtyCol];
+        const v = toNumber(raw);
         if(v !== null) amount = (byClient[client][key] ? byClient[client][key].amount : 0) + v;
+        commented = (byClient[client][key] && byClient[client][key].commented) || (v !== null && !isPureNumber(raw));
       }
       if(amount === null) continue;
-      byClient[client][key] = {name: kit, amount, lot, expiry, note, branch: rowBranch};
+      byClient[client][key] = {name: kit, amount, lot, expiry, note, branch: rowBranch, commented};
       if(rowBranch) lastBranchSeen[client] = rowBranch;
     }
     Object.keys(byClient).forEach(client => mergeKitsIntoClient(client, byClient[client], fileName, lastBranchSeen[client] || sheetBranch || branch));
@@ -887,7 +902,7 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
       const visibleEntries = lowOnly ? entries.filter(e => e.amount <= threshold) : entries;
       if(!entries.length || (lowOnly && !visibleEntries.length)) return;
 
-      const total = entries.reduce((s,e)=>s+e.amount,0);
+      const total = entries.filter(e => !e.commented).reduce((s,e)=>s+e.amount,0);
       const hasLow = entries.some(e => e.amount <= threshold);
       const maxVal = Math.max(1, ...entries.map(e => e.amount));
       const initial = (client.trim()[0] || '?').toUpperCase();
@@ -914,7 +929,8 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
         const entryBranch = e.branch || branches[client];
         const sub = [
           clientBranches.length > 1 && entryBranch ? entryBranch : '',
-          e.lot ? 'лот ' + e.lot : '', e.expiry ? 'годен до ' + e.expiry : '', e.note || ''
+          e.lot ? 'лот ' + e.lot : '', e.expiry ? 'годен до ' + e.expiry : '', e.note || '',
+          e.commented ? 'не входит в «Всего проб»' : ''
         ].filter(Boolean).join(' · ');
         html += '<div class="kit-row">' +
                 '<div class="kit-main"><div class="kit-name">' + escapeHtml(e.name) + '</div>' +
