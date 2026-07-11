@@ -86,6 +86,7 @@
   .kit-icon{flex-shrink:0; color:var(--muted);}
   .kit-main{flex:1; min-width:0;}
   .kit-name{color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .kit-sub{font-size:11px; color:var(--muted); margin-top:1px;}
   .kit-bar-track{height:5px; border-radius:3px; background:var(--border); margin-top:5px; overflow:hidden;}
   .kit-bar-fill{height:100%; border-radius:3px;}
   .kit-amount{font-weight:700; flex-shrink:0; min-width:44px; text-align:right;}
@@ -280,14 +281,14 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
   // Bump this whenever SEED_DATA/SEED_BRANCHES below is updated, so phones
   // that already have older saved data pick up the new baked-in numbers
   // instead of keeping whatever was there before.
-  const SEED_VERSION = 2;
+  const SEED_VERSION = 3;
 
   // Pre-loaded starting data (from the last files uploaded), so the app shows
   // something useful immediately without requiring an upload on first open.
   // Overwritten as soon as a real file is uploaded on this device.
-  const SEED_DATA = {"Идаванг":{"PRVgB":1648,"PRRSvXR":1678,"Hps":728,"App ApxIV":408,"RF21":4},"Тропарево":{"Mhyo":800,"PRRSvXR":1678,"App ApxIV":408},"МерсиТрейд":{"PCV2":512},"Кобб-Раша":{"Salm D":776,"IBV":94,"REO":356,"IBD":100,"Mg":36,"Ms":36},"ООО \"Эпсилон-Био Москва\"":{"PRRS-XR":2472,"PRVgB":480,"PCV":576,"IBD":768,"IBV":1288,"Mg":542,"Ms":550,"ART":376,"ORT":48,"BLS":480,"REO":594,"CSF":440,"Sal.Gp B/C1/D":1440,"ILT":472,"CAV":960,"FAdV":480,"NDV":560,"AE":53,"EDS":480,"Salm.Gp B":480,"REF 23 (5мл)":1,"REF 22 (5мл)":1},"Агро-Белогорье":{"PRRS":708},"БВК-Глобал":{"PRRS":30,"PCV":60},"АПК Промагро":{"PRRS":77,"б.Ауески gB":77},"ПФ Чернухинская":{"ИББ":72,"ИБК":72},"АО Агрофирма Русь":{"ИББ":58,"IBD":124,"IBV":214,"ART":36,"ILT":36},"Агроэко-Воронеж":{"PRRS":18},"ТД ВИК за Троицкое":{"ЦВИС":90},"Егорьевская ПТФ":{"SalmB":36},"Агроэко-Восток":{"PRRS":447,"Mhyo":10},"СПК Ширяева":{"IBD":36},"Донская Индейка":{"Mg":25,"Ms":25,"AE":50,"NDV":25,"ART":25},"ООО Агросфера":{"IBD":36,"IBV":36},"ООО Белянка":{"IBD":83,"NDV":45,"IBV":138,"ART":138,"AE":45,"ILT":48,"Mg":48},"ООО АгроРусь":{"IBD":18,"NDV":18},"ООО ПензаМолИнвест":{"IBD":144},"ООО ТопАгро":{"PRRS":302},"ООО Грайворонский СК-1":{"РРСС":165},"ООО Грайворонский СК-2":{"РРСС":140},"ООО \"СХ Каменка\"":{"РРСС":62}};
-  const SEED_BRANCHES = {"Идаванг":"Белгород","Тропарево":"Белгород","МерсиТрейд":"Белгород","Кобб-Раша":"Белгород","ООО \"Эпсилон-Био Москва\"":"Москва","Агро-Белогорье":"Белгород","БВК-Глобал":"Белгород","АПК Промагро":"Белгород","ПФ Чернухинская":"Белгород","АО Агрофирма Русь":"Белгород","Агроэко-Воронеж":"Белгород","ТД ВИК за Троицкое":"Белгород","Егорьевская ПТФ":"Белгород","Агроэко-Восток":"Белгород","СПК Ширяева":"Белгород","Донская Индейка":"Белгород","ООО Агросфера":"Белгород","ООО Белянка":"Белгород","ООО АгроРусь":"Белгород","ООО ПензаМолИнвест":"Белгород","ООО ТопАгро":"Белгород","ООО Грайворонский СК-1":"Белгород","ООО Грайворонский СК-2":"Белгород","ООО \"СХ Каменка\"":"Белгород"};
-  const SEED_DATE = '07.07.2026';
+  const SEED_DATA = {"СПК Ширяева":{"IBV__CK119__10.12.2026":{"name":"IBV","amount":600,"lot":"CK119","expiry":"10.12.2026"},"NDV__CK116__27.11.2026":{"name":"NDV","amount":560,"lot":"CK116","expiry":"27.11.2026"},"ILT__CK124__11.11.2026":{"name":"ILT","amount":368,"lot":"CK124","expiry":"11.11.2026"},"ART__CK120__09.01.2027":{"name":"ART","amount":592,"lot":"CK120","expiry":"09.01.2027"},"Mg__CK114__07.01.2027":{"name":"Mg","amount":296,"lot":"CK114","expiry":"07.01.2027"},"Ms__CK115__08.12.2026":{"name":"Ms","amount":320,"lot":"CK115","expiry":"08.12.2026"}},"Белгранкорм":{"NDV__CK116__04.05.2023":{"name":"NDV","amount":72,"lot":"CK116","expiry":"04.05.2023"},"IBD__CK113__14.01.2027":{"name":"IBD","amount":1820,"lot":"CK113","expiry":"14.01.2027"},"IBV__CK119__10.02.2027":{"name":"IBV","amount":1400,"lot":"CK119","expiry":"10.02.2027"},"Mg__CK114__07.01.2027":{"name":"Mg","amount":352,"lot":"CK114","expiry":"07.01.2027"},"Ms__CK115__10.12.2026":{"name":"Ms","amount":727,"lot":"CK115","expiry":"10.12.2026"},"REO__CK110__19.02.2026":{"name":"REO","amount":16,"lot":"CK110","expiry":"19.02.2026"},"REO__CK110__30.01.2027":{"name":"REO","amount":376,"lot":"CK110","expiry":"30.01.2027"},"EDS__CK112__12.08.2026":{"name":"EDS","amount":1456,"lot":"CK112","expiry":"12.08.2026"},"AE__CK123__07.08.2024":{"name":"AE","amount":3442,"lot":"CK123","expiry":"07.08.2024"},"ART__CK120__06.02.2027":{"name":"ART","amount":1032,"lot":"CK120","expiry":"06.02.2027"},"Salm B__CK118__01.05.2026":{"name":"Salm B","amount":606,"lot":"CK118","expiry":"01.05.2026"},"Salm D__CK117__11.01.2026":{"name":"Salm D","amount":276,"lot":"CK117","expiry":"11.01.2026"},"ILT__CK124__16.07.2025":{"name":"ILT","amount":204,"lot":"CK124","expiry":"16.07.2025"},"ORT__CK108__16.03.2021":{"name":"ORT","amount":160,"lot":"CK108","expiry":"16.03.2021"},"CAV__CK126__25.11.2026":{"name":"CAV","amount":1342,"lot":"CK126","expiry":"25.11.2026"},"NDV-F__CK122__20.03.2021":{"name":"NDV-F","amount":448,"lot":"CK122","expiry":"20.03.2021"},"AI__CK121__30.06.2022":{"name":"AI","amount":84,"lot":"CK121","expiry":"30.06.2022"},"FAdV__CK132__21.01.2022":{"name":"FAdV","amount":46,"lot":"CK132","expiry":"21.01.2022"},"FAdV__CK132__30.10.2026":{"name":"FAdV","amount":1416,"lot":"CK132","expiry":"30.10.2026"},"InfA Multi__SK401__26.04.2022":{"name":"InfA Multi","amount":132,"lot":"SK401","expiry":"26.04.2022"},"RF19__CR100__":{"name":"RF19","amount":5,"lot":"CR100","expiry":""},"RF23__CR100__":{"name":"RF23","amount":2,"lot":"CR100","expiry":""},"PRRS-XR__SK112__22.08.2026":{"name":"PRRS-XR","amount":5192,"lot":"SK112","expiry":"22.08.2026"},"InfA Multi__SK401__22.12.2022":{"name":"InfA Multi","amount":84,"lot":"SK401","expiry":"22.12.2022"},"RF14__SR700__01.04.2023":{"name":"RF14","amount":48,"lot":"SR700","expiry":"01.04.2023"},"RF21__SR700__01.02.2028":{"name":"RF21","amount":1,"lot":"SR700","expiry":"01.02.2028"},"Наконечники 0,5-250 мкл":{"name":"Наконечники 0,5-250 мкл","amount":35024,"lot":"","expiry":""},"Планшет плоскодонный":{"name":"Планшет плоскодонный","amount":1192,"lot":"","expiry":""}},"Эпсилон-Био Москва":{"PRRS-XR__SK112__22.08.2026":{"name":"PRRS-XR","amount":2272,"lot":"SK112","expiry":"22.08.2026"},"PRVgB__SK109__29.11.2025":{"name":"PRVgB","amount":480,"lot":"SK109","expiry":"29.11.2025"},"PCV__SK105__30.04.2026":{"name":"PCV","amount":576,"lot":"SK105","expiry":"30.04.2026"},"IBD__CK113__27.03.2026":{"name":"IBD","amount":768,"lot":"CK113","expiry":"27.03.2026"},"IBV__CK119__10.02.2027":{"name":"IBV","amount":1288,"lot":"CK119","expiry":"10.02.2027"},"Mg__CK114__07.01.2027":{"name":"Mg","amount":542,"lot":"CK114","expiry":"07.01.2027"},"Ms__CK115__02.12.2026":{"name":"Ms","amount":550,"lot":"CK115","expiry":"02.12.2026"},"ART__CK120__06.02.2027":{"name":"ART","amount":376,"lot":"CK120","expiry":"06.02.2027"},"ORT__CK108__":{"name":"ORT","amount":48,"lot":"CK108","expiry":""},"BLS__CK131__27.02.2026":{"name":"BLS","amount":480,"lot":"CK131","expiry":"27.02.2026"},"REO__CK110__20.01.2027":{"name":"REO","amount":594,"lot":"CK110","expiry":"20.01.2027"},"CSF__SK106__25.04.2024":{"name":"CSF","amount":440,"lot":"SK106","expiry":"25.04.2024"},"Sal.Gp B/C1/D__SK101__12.06.2026":{"name":"Sal.Gp B/C1/D","amount":1440,"lot":"SK101","expiry":"12.06.2026"},"ILT__SK124__09.04.2026":{"name":"ILT","amount":472,"lot":"SK124","expiry":"09.04.2026"},"CAV__SK126__25.11.2026":{"name":"CAV","amount":960,"lot":"SK126","expiry":"25.11.2026"},"FAdV__CK132__28.01.2027":{"name":"FAdV","amount":480,"lot":"CK132","expiry":"28.01.2027"},"NDV__CK116__27.11.2026":{"name":"NDV","amount":560,"lot":"CK116","expiry":"27.11.2026"},"AE__CK123__":{"name":"AE","amount":53,"lot":"CK123","expiry":""},"EDS__CK112__12.08.2026":{"name":"EDS","amount":480,"lot":"CK112","expiry":"12.08.2026"},"App OmpA__KIT6071__31.12.2026":{"name":"App OmpA","amount":480,"lot":"KIT6071","expiry":"31.12.2026"},"App ApxIV__KIT6072__04.03.2027":{"name":"App ApxIV","amount":480,"lot":"KIT6072","expiry":"04.03.2027"},"Salm.Gp B__CK118__01.05.2026":{"name":"Salm.Gp B","amount":480,"lot":"CK118","expiry":"01.05.2026"},"REF 23 (5мл)__CR100__":{"name":"REF 23 (5мл)","amount":1,"lot":"CR100","expiry":""},"REF 22 (5мл)__CR100__":{"name":"REF 22 (5мл)","amount":1,"lot":"CR100","expiry":""},"PRRS-XR__SK112__":{"name":"PRRS-XR","amount":84,"lot":"SK112","expiry":""}}};
+  const SEED_BRANCHES = {"СПК Ширяева":"Белгород","Белгранкорм":"Белгород","Эпсилон-Био Москва":"Москва"};
+  const SEED_DATE = '08.07.2026';
 
   let grouped = {};   // { client: { kit: amount } }
   let branches = {};  // { client: 'Москва' | 'Белгород' | '' }
@@ -355,10 +356,26 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
       '. Последний файл: ' + last.file + clientPart + ' — ' + last.date;
   }
 
-  function mergeKitsIntoClient(client, kits, fileName, branch){
+  // grouped[client] holds { batchKey: {name, amount, lot, expiry} }. batchKey
+  // is "name" alone when there's no lot info (old behaviour: one number per
+  // kit, overwritten on re-upload), or "name__lot" when a lot/batch number is
+  // known - so two batches of the same kit with different expiry dates stay
+  // as separate lines instead of being silently added together.
+  function batchKey(name, lot, expiry){
+    return (lot || expiry) ? name + '__' + lot + '__' + expiry : name;
+  }
+  function toEntries(simpleKits){
+    const out = {};
+    Object.keys(simpleKits).forEach(name => {
+      out[name] = {name, amount: simpleKits[name], lot:'', expiry:''};
+    });
+    return out;
+  }
+
+  function mergeKitsIntoClient(client, entries, fileName, branch){
     if(!grouped[client]) grouped[client] = {};
-    Object.keys(kits).forEach(kit => {
-      grouped[client][kit] = kits[kit];
+    Object.keys(entries).forEach(key => {
+      grouped[client][key] = entries[key];
     });
     if(branch) branches[client] = branch;
     sources.push({client, file: fileName, date: new Date().toLocaleString('ru-RU')});
@@ -428,7 +445,7 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
     // "flat" multi-client table: a header row with a "клиент" column
     for(let r=0; r<aoa.length; r++){
       const row = aoa[r];
-      if(row.some(c => /клиент|заказчик/i.test(String(c)))){
+      if(row.some(c => /клиент|заказчик|организац/i.test(String(c)))){
         return {type:'flat', rowIdx:r};
       }
     }
@@ -499,7 +516,7 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
         } else {
           // no per-column client tags found in this file - fall back to a single "whole lab" bucket
           const client = extractClientName(aoa, headerRowIdx, fileName);
-          mergeKitsIntoClient(client, kitsRemainder, fileName, branch);
+          mergeKitsIntoClient(client, toEntries(kitsRemainder), fileName, branch);
         }
         saveState();
         render();
@@ -576,34 +593,49 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
         byClient[display][kitName] = remainder;
       });
     }
-    Object.keys(byClient).forEach(client => mergeKitsIntoClient(client, byClient[client], fileName, branch));
+    Object.keys(byClient).forEach(client => mergeKitsIntoClient(client, toEntries(byClient[client]), fileName, branch));
   }
 
   function mergeFlatFormat(aoa, headerRowIdx, fileName, branch){
     const headerRow = aoa[headerRowIdx];
-    const clientCol = colIndexMatching(headerRow, /клиент|заказчик/i);
+    const clientCol = colIndexMatching(headerRow, /клиент|заказчик|организац/i);
     const kitCol = colIndexMatching(headerRow, /набор|биочип|наименован|показател/i);
-    const remainderCol = colIndexMatching(headerRow, /остат|итог/i);
-    const qtyCol = colIndexMatching(headerRow, /кол-во|количество|движение|приход|расход/i);
+    const remainderCol = colIndexMatching(headerRow, /остат|итог|количество/i);
+    const qtyCol = colIndexMatching(headerRow, /кол-во|движение|приход|расход/i);
     const branchCol = colIndexMatching(headerRow, /филиал|город/i);
+    const lotCol = colIndexMatching(headerRow, /^лот$|парти/i);
+    const expiryCol = colIndexMatching(headerRow, /годен|срок\s*годн/i);
     if(clientCol < 0 || kitCol < 0 || (remainderCol < 0 && qtyCol < 0)) return;
 
-    const byClient = {};
+    const byClient = {};      // client -> { batchKey: {name, amount, lot, expiry} }
     const byClientBranch = {};
     for(let r=headerRowIdx+1; r<aoa.length; r++){
       const row = aoa[r];
       const client = String(row[clientCol]||'').trim();
       const kit = String(row[kitCol]||'').trim();
       if(!client || !kit) continue;
+      const lot = lotCol >= 0 ? String(row[lotCol]||'').trim() : '';
+      const expiry = expiryCol >= 0 ? String(row[expiryCol]||'').trim() : '';
+      const key = batchKey(kit, lot, expiry);
       if(!byClient[client]) byClient[client] = {};
+      let amount = null;
       if(remainderCol >= 0){
-        const v = toNumber(row[remainderCol]);
-        if(v !== null) byClient[client][kit] = v;
+        amount = toNumber(row[remainderCol]);
       } else {
         const v = toNumber(row[qtyCol]);
-        if(v !== null) byClient[client][kit] = (byClient[client][kit]||0) + v;
+        if(v !== null) amount = (byClient[client][key] ? byClient[client][key].amount : 0) + v;
       }
-      if(branchCol >= 0){
+      if(amount === null) continue;
+      byClient[client][key] = {name: kit, amount, lot, expiry};
+
+      // The lab's own branch stock sometimes shows up as a "client" row
+      // (e.g. Организация = "Эпсилон-Био Москва") - that names a branch,
+      // not a customer, so it's tagged by city regardless of the file's
+      // own branch (kits owned by Moscow, physically held elsewhere).
+      const selfBranch = BRANCHES.find(b => /эпсилон/i.test(client) && client.toLowerCase().includes(b.toLowerCase()));
+      if(selfBranch){
+        byClientBranch[client] = selfBranch;
+      } else if(branchCol >= 0){
         const matched = BRANCHES.find(b => b.toLowerCase() === norm(row[branchCol]));
         if(matched) byClientBranch[client] = matched;
       }
@@ -658,7 +690,7 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
       return;
     }
     const branch = detectBranch(pendingUnknown.aoa, headerRowIdx) || promptForBranch(pendingUnknown.fileName);
-    mergeKitsIntoClient(client, kits, pendingUnknown.fileName, branch);
+    mergeKitsIntoClient(client, toEntries(kits), pendingUnknown.fileName, branch);
     overlay.classList.remove('show');
     pendingUnknown = null;
     saveState();
@@ -741,14 +773,14 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
 
     let html = '';
     filtered.forEach(client => {
-      const kits = grouped[client];
-      const kitNames = Object.keys(kits).sort((a,b)=>a.localeCompare(b,'ru'));
-      const visibleKits = lowOnly ? kitNames.filter(k => kits[k] <= threshold) : kitNames;
-      if(lowOnly && !visibleKits.length) return;
+      const entries = Object.values(grouped[client])
+        .sort((a,b) => a.name.localeCompare(b.name,'ru') || (a.lot||'').localeCompare(b.lot||'','ru'));
+      const visibleEntries = lowOnly ? entries.filter(e => e.amount <= threshold) : entries;
+      if(lowOnly && !visibleEntries.length) return;
 
-      const total = kitNames.reduce((s,k)=>s+kits[k],0);
-      const hasLow = kitNames.some(k => kits[k] <= threshold);
-      const maxVal = Math.max(1, ...kitNames.map(k => kits[k]));
+      const total = entries.reduce((s,e)=>s+e.amount,0);
+      const hasLow = entries.some(e => e.amount <= threshold);
+      const maxVal = Math.max(1, ...entries.map(e => e.amount));
       const initial = (client.trim()[0] || '?').toUpperCase();
 
       html += '<div class="client-card">';
@@ -767,12 +799,14 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
               '</div>';
       html += '</div>';
       html += '<div class="kits">';
-      visibleKits.forEach(k => {
-        const v = kits[k];
+      visibleEntries.forEach(e => {
+        const v = e.amount;
         const pct = Math.max(4, Math.round((Math.max(0,v) / maxVal) * 100));
+        const sub = [e.lot ? 'лот ' + e.lot : '', e.expiry ? 'годен до ' + e.expiry : ''].filter(Boolean).join(' · ');
         html += '<div class="kit-row">' +
                 '<div class="kit-icon">' + ICONS.vial + '</div>' +
-                '<div class="kit-main"><div class="kit-name">' + escapeHtml(k) + '</div>' +
+                '<div class="kit-main"><div class="kit-name">' + escapeHtml(e.name) + '</div>' +
+                (sub ? '<div class="kit-sub">' + escapeHtml(sub) + '</div>' : '') +
                 '<div class="kit-bar-track"><div class="kit-bar-fill ' + barClass(v, threshold) + '" style="width:' + pct + '%"></div></div></div>' +
                 '<div class="kit-amount ' + amountClass(v, threshold) + '">' + v + '</div></div>';
       });
