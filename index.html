@@ -285,13 +285,13 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
   // Bump this whenever SEED_DATA/SEED_BRANCHES below is updated, so phones
   // that already have older saved data pick up the new baked-in numbers
   // instead of keeping whatever was there before.
-  const SEED_VERSION = 4;
+  const SEED_VERSION = 5;
 
   // Pre-loaded starting data (from the last files uploaded), so the app shows
   // something useful immediately without requiring an upload on first open.
   // Overwritten as soon as a real file is uploaded on this device.
-  const SEED_DATA = {"СПК Ширяева":{"IBV__CK119__10.12.2026__":{"name":"IBV","amount":600,"lot":"CK119","expiry":"10.12.2026","note":""},"NDV__CK116__27.11.2026__":{"name":"NDV","amount":560,"lot":"CK116","expiry":"27.11.2026","note":""},"ILT__CK124__11.11.2026__":{"name":"ILT","amount":368,"lot":"CK124","expiry":"11.11.2026","note":""},"ART__CK120__09.01.2027__":{"name":"ART","amount":592,"lot":"CK120","expiry":"09.01.2027","note":""},"Mg__CK114__07.01.2027__":{"name":"Mg","amount":296,"lot":"CK114","expiry":"07.01.2027","note":""},"Ms__CK115__08.12.2026__":{"name":"Ms","amount":320,"lot":"CK115","expiry":"08.12.2026","note":""}},"Белгранкорм":{"NDV__CK116__04.05.2023__":{"name":"NDV","amount":72,"lot":"CK116","expiry":"04.05.2023","note":""},"IBD__CK113__14.01.2027__":{"name":"IBD","amount":1820,"lot":"CK113","expiry":"14.01.2027","note":""},"IBV__CK119__10.02.2027__":{"name":"IBV","amount":1400,"lot":"CK119","expiry":"10.02.2027","note":""},"Mg__CK114__07.01.2027__":{"name":"Mg","amount":352,"lot":"CK114","expiry":"07.01.2027","note":""},"Ms__CK115__10.12.2026__":{"name":"Ms","amount":727,"lot":"CK115","expiry":"10.12.2026","note":""},"REO__CK110__19.02.2026__":{"name":"REO","amount":16,"lot":"CK110","expiry":"19.02.2026","note":""},"REO__CK110__30.01.2027__":{"name":"REO","amount":376,"lot":"CK110","expiry":"30.01.2027","note":""},"EDS__CK112__12.08.2026__":{"name":"EDS","amount":1456,"lot":"CK112","expiry":"12.08.2026","note":""},"AE__CK123__07.08.2024__":{"name":"AE","amount":3442,"lot":"CK123","expiry":"07.08.2024","note":""},"ART__CK120__06.02.2027__":{"name":"ART","amount":1032,"lot":"CK120","expiry":"06.02.2027","note":""},"Salm B__CK118__01.05.2026__":{"name":"Salm B","amount":606,"lot":"CK118","expiry":"01.05.2026","note":""},"Salm D__CK117__11.01.2026__":{"name":"Salm D","amount":276,"lot":"CK117","expiry":"11.01.2026","note":""},"ILT__CK124__16.07.2025__":{"name":"ILT","amount":204,"lot":"CK124","expiry":"16.07.2025","note":""},"ORT__CK108__16.03.2021__":{"name":"ORT","amount":160,"lot":"CK108","expiry":"16.03.2021","note":""},"CAV__CK126__25.11.2026__":{"name":"CAV","amount":1342,"lot":"CK126","expiry":"25.11.2026","note":""},"NDV-F__CK122__20.03.2021__":{"name":"NDV-F","amount":448,"lot":"CK122","expiry":"20.03.2021","note":""},"AI__CK121__30.06.2022__":{"name":"AI","amount":84,"lot":"CK121","expiry":"30.06.2022","note":""},"FAdV__CK132__21.01.2022__":{"name":"FAdV","amount":46,"lot":"CK132","expiry":"21.01.2022","note":""},"FAdV__CK132__30.10.2026__":{"name":"FAdV","amount":1416,"lot":"CK132","expiry":"30.10.2026","note":""},"InfA Multi__SK401__26.04.2022__":{"name":"InfA Multi","amount":132,"lot":"SK401","expiry":"26.04.2022","note":""},"RF19__CR100____":{"name":"RF19","amount":5,"lot":"CR100","expiry":"","note":""},"RF23__CR100____":{"name":"RF23","amount":2,"lot":"CR100","expiry":"","note":""},"PRRS-XR__SK112__22.08.2026__":{"name":"PRRS-XR","amount":5192,"lot":"SK112","expiry":"22.08.2026","note":""},"InfA Multi__SK401__22.12.2022__":{"name":"InfA Multi","amount":84,"lot":"SK401","expiry":"22.12.2022","note":""},"RF14__SR700__01.04.2023__":{"name":"RF14","amount":48,"lot":"SR700","expiry":"01.04.2023","note":""},"RF21__SR700__01.02.2028__":{"name":"RF21","amount":1,"lot":"SR700","expiry":"01.02.2028","note":""}},"Эпсилон-Био Москва":{"PRRS-XR__SK112__22.08.2026__":{"name":"PRRS-XR","amount":2272,"lot":"SK112","expiry":"22.08.2026","note":""},"PRVgB__SK109__29.11.2025__":{"name":"PRVgB","amount":480,"lot":"SK109","expiry":"29.11.2025","note":""},"PCV__SK105__30.04.2026__":{"name":"PCV","amount":576,"lot":"SK105","expiry":"30.04.2026","note":""},"IBD__CK113__27.03.2026__":{"name":"IBD","amount":768,"lot":"CK113","expiry":"27.03.2026","note":""},"IBV__CK119__10.02.2027__":{"name":"IBV","amount":1288,"lot":"CK119","expiry":"10.02.2027","note":""},"Mg__CK114__07.01.2027__":{"name":"Mg","amount":542,"lot":"CK114","expiry":"07.01.2027","note":""},"Ms__CK115__02.12.2026__":{"name":"Ms","amount":550,"lot":"CK115","expiry":"02.12.2026","note":""},"ART__CK120__06.02.2027__":{"name":"ART","amount":376,"lot":"CK120","expiry":"06.02.2027","note":""},"ORT__CK108____":{"name":"ORT","amount":48,"lot":"CK108","expiry":"","note":""},"BLS__CK131__27.02.2026__":{"name":"BLS","amount":480,"lot":"CK131","expiry":"27.02.2026","note":""},"REO__CK110__20.01.2027__":{"name":"REO","amount":594,"lot":"CK110","expiry":"20.01.2027","note":""},"CSF__SK106__25.04.2024__":{"name":"CSF","amount":440,"lot":"SK106","expiry":"25.04.2024","note":""},"Sal.Gp B/C1/D__SK101__12.06.2026__":{"name":"Sal.Gp B/C1/D","amount":1440,"lot":"SK101","expiry":"12.06.2026","note":""},"ILT__SK124__09.04.2026__":{"name":"ILT","amount":472,"lot":"SK124","expiry":"09.04.2026","note":""},"CAV__SK126__25.11.2026__":{"name":"CAV","amount":960,"lot":"SK126","expiry":"25.11.2026","note":""},"FAdV__CK132__28.01.2027__":{"name":"FAdV","amount":480,"lot":"CK132","expiry":"28.01.2027","note":""},"NDV__CK116__27.11.2026__":{"name":"NDV","amount":560,"lot":"CK116","expiry":"27.11.2026","note":""},"AE__CK123____":{"name":"AE","amount":53,"lot":"CK123","expiry":"","note":""},"EDS__CK112__12.08.2026__":{"name":"EDS","amount":480,"lot":"CK112","expiry":"12.08.2026","note":""},"App OmpA__KIT6071__31.12.2026__":{"name":"App OmpA","amount":480,"lot":"KIT6071","expiry":"31.12.2026","note":""},"App ApxIV__KIT6072__04.03.2027__":{"name":"App ApxIV","amount":480,"lot":"KIT6072","expiry":"04.03.2027","note":""},"Salm.Gp B__CK118__01.05.2026__":{"name":"Salm.Gp B","amount":480,"lot":"CK118","expiry":"01.05.2026","note":""},"REF 23 (5мл)__CR100____":{"name":"REF 23 (5мл)","amount":1,"lot":"CR100","expiry":"","note":""},"REF 22 (5мл)__CR100____":{"name":"REF 22 (5мл)","amount":1,"lot":"CR100","expiry":"","note":""},"PRRS-XR__SK112____стрип.плашка":{"name":"PRRS-XR","amount":84,"lot":"SK112","expiry":"","note":"стрип.плашка"},"PRRS-XR__SK112____монолит.плашка":{"name":"PRRS-XR","amount":84,"lot":"SK112","expiry":"","note":"монолит.плашка"}}};
-  const SEED_BRANCHES = {"СПК Ширяева":"Белгород","Белгранкорм":"Белгород","Эпсилон-Био Москва":"Москва"};
+  const SEED_DATA = {"Эпсилон-Био Белгород":{"PRRS-XR__SK112__22.08.2026__":{"name":"PRRS-XR","amount":2272,"lot":"SK112","expiry":"22.08.2026","note":""},"PRVgB__SK109__29.11.2025__":{"name":"PRVgB","amount":480,"lot":"SK109","expiry":"29.11.2025","note":""},"PCV__SK105__30.04.2026__":{"name":"PCV","amount":576,"lot":"SK105","expiry":"30.04.2026","note":""},"IBD__CK113__27.03.2026__":{"name":"IBD","amount":768,"lot":"CK113","expiry":"27.03.2026","note":""},"IBV__CK119__10.02.2027__":{"name":"IBV","amount":1288,"lot":"CK119","expiry":"10.02.2027","note":""},"Mg__CK114__07.01.2027__":{"name":"Mg","amount":542,"lot":"CK114","expiry":"07.01.2027","note":""},"Ms__CK115__02.12.2026__":{"name":"Ms","amount":550,"lot":"CK115","expiry":"02.12.2026","note":""},"ART__CK120__06.02.2027__":{"name":"ART","amount":376,"lot":"CK120","expiry":"06.02.2027","note":""},"ORT__CK108__нет данных__":{"name":"ORT","amount":48,"lot":"CK108","expiry":"нет данных","note":""},"BLS__CK131__27.02.2026__":{"name":"BLS","amount":480,"lot":"CK131","expiry":"27.02.2026","note":""},"REO__CK110__20.01.2027__":{"name":"REO","amount":594,"lot":"CK110","expiry":"20.01.2027","note":""},"CSF__SK106__25.04.2024__":{"name":"CSF","amount":440,"lot":"SK106","expiry":"25.04.2024","note":""},"Sal.Gp B/C1/D__SK101__12.06.2026__":{"name":"Sal.Gp B/C1/D","amount":1440,"lot":"SK101","expiry":"12.06.2026","note":""},"ILT__SK124__09.04.2026__":{"name":"ILT","amount":472,"lot":"SK124","expiry":"09.04.2026","note":""},"CAV__SK126__25.11.2026__":{"name":"CAV","amount":960,"lot":"SK126","expiry":"25.11.2026","note":""},"FAdV__CK132__28.01.2027__":{"name":"FAdV","amount":480,"lot":"CK132","expiry":"28.01.2027","note":""},"NDV__CK116__27.11.2026__":{"name":"NDV","amount":560,"lot":"CK116","expiry":"27.11.2026","note":""},"AE__CK123____":{"name":"AE","amount":53,"lot":"CK123","expiry":"","note":""},"EDS__CK112__12.08.2026__":{"name":"EDS","amount":480,"lot":"CK112","expiry":"12.08.2026","note":""},"App OmpA__KIT6071__31.12.2026__":{"name":"App OmpA","amount":464,"lot":"KIT6071","expiry":"31.12.2026","note":""},"App ApxIV__KIT6072__04.03.2027__":{"name":"App ApxIV","amount":464,"lot":"KIT6072","expiry":"04.03.2027","note":""},"Salm.Gp B__CK118__01.05.2026__":{"name":"Salm.Gp B","amount":480,"lot":"CK118","expiry":"01.05.2026","note":""},"REF 23 (5мл)__CR100__нет данных__":{"name":"REF 23 (5мл)","amount":1,"lot":"CR100","expiry":"нет данных","note":""},"REF 22 (5мл)__CR100__нет данных__":{"name":"REF 22 (5мл)","amount":1,"lot":"CR100","expiry":"нет данных","note":""},"PRRS-XR__SK112__стрип.плашка Верификация PPCC__":{"name":"PRRS-XR","amount":84,"lot":"SK112","expiry":"стрип.плашка Верификация PPCC","note":""},"PRRS-XR__SK112__монолит.плашка Верификация PPCC__":{"name":"PRRS-XR","amount":84,"lot":"SK112","expiry":"монолит.плашка Верификация PPCC","note":""}},"СПК Ширяева":{"IBV__CK119__10.12.2026__":{"name":"IBV","amount":600,"lot":"CK119","expiry":"10.12.2026","note":""},"NDV__CK116__27.11.2026__":{"name":"NDV","amount":560,"lot":"CK116","expiry":"27.11.2026","note":""},"ILT__CK124__11.11.2026__":{"name":"ILT","amount":368,"lot":"CK124","expiry":"11.11.2026","note":""},"ART__CK120__09.01.2027__":{"name":"ART","amount":592,"lot":"CK120","expiry":"09.01.2027","note":""},"Mg__CK114__07.01.2027__":{"name":"Mg","amount":296,"lot":"CK114","expiry":"07.01.2027","note":""},"Ms__CK115__08.12.2026__":{"name":"Ms","amount":320,"lot":"CK115","expiry":"08.12.2026","note":""},"IBV__СК119__45637__":{"name":"IBV","amount":72,"lot":"СК119","expiry":"45637","note":""},"NDV__СК116__45694__":{"name":"NDV","amount":0,"lot":"СК116","expiry":"45694","note":""},"ILT__СК124__45854__":{"name":"ILT","amount":320,"lot":"СК124","expiry":"45854","note":""},"ART__CК120__45637__":{"name":"ART","amount":48,"lot":"CК120","expiry":"45637","note":""},"Mg__СК114__45806__":{"name":"Mg","amount":272,"lot":"СК114","expiry":"45806","note":""},"Ms__СК115__45736__":{"name":"Ms","amount":272,"lot":"СК115","expiry":"45736","note":""}},"Белгранкорм":{"NDV__CK116__04.05.2023__":{"name":"NDV","amount":72,"lot":"CK116","expiry":"04.05.2023","note":""},"IBD__CK113__14.01.2027__":{"name":"IBD","amount":1820,"lot":"CK113","expiry":"14.01.2027","note":""},"IBV__CK119__10.02.2027__":{"name":"IBV","amount":1400,"lot":"CK119","expiry":"10.02.2027","note":""},"Mg__CK114__07.01.2027__":{"name":"Mg","amount":352,"lot":"CK114","expiry":"07.01.2027","note":""},"Ms__CK115__10.12.2026__":{"name":"Ms","amount":727,"lot":"CK115","expiry":"10.12.2026","note":""},"REO__CK110__19.02.2026__":{"name":"REO","amount":16,"lot":"CK110","expiry":"19.02.2026","note":""},"REO__CK110__30.01.2027__":{"name":"REO","amount":376,"lot":"CK110","expiry":"30.01.2027","note":""},"EDS__CK112__12.08.2026__":{"name":"EDS","amount":1456,"lot":"CK112","expiry":"12.08.2026","note":""},"AE__CK123__07.08.2024__":{"name":"AE","amount":3442,"lot":"CK123","expiry":"07.08.2024","note":""},"ART__CK120__06.02.2027__":{"name":"ART","amount":1032,"lot":"CK120","expiry":"06.02.2027","note":""},"Salm B__CK118__01.05.2026__":{"name":"Salm B","amount":606,"lot":"CK118","expiry":"01.05.2026","note":""},"Salm D__CK117__11.01.2026__":{"name":"Salm D","amount":276,"lot":"CK117","expiry":"11.01.2026","note":""},"ILT__CK124__16.07.2025__":{"name":"ILT","amount":204,"lot":"CK124","expiry":"16.07.2025","note":""},"ORT__CK108__16.03.2021__":{"name":"ORT","amount":160,"lot":"CK108","expiry":"16.03.2021","note":""},"CAV__CK126__25.11.2026__":{"name":"CAV","amount":1342,"lot":"CK126","expiry":"25.11.2026","note":""},"NDV-F__CK122__20.03.2021__":{"name":"NDV-F","amount":448,"lot":"CK122","expiry":"20.03.2021","note":""},"AI__CK121__30.06.2022__":{"name":"AI","amount":84,"lot":"CK121","expiry":"30.06.2022","note":""},"FAdV__CK132__21.01.2022__":{"name":"FAdV","amount":46,"lot":"CK132","expiry":"21.01.2022","note":""},"FAdV__CK132__30.10.2026__":{"name":"FAdV","amount":1416,"lot":"CK132","expiry":"30.10.2026","note":""},"InfA Multi__SK401__26.04.2022__":{"name":"InfA Multi","amount":132,"lot":"SK401","expiry":"26.04.2022","note":""},"RF19__CR100____":{"name":"RF19","amount":5,"lot":"CR100","expiry":"","note":""},"RF23__CR100____":{"name":"RF23","amount":2,"lot":"CR100","expiry":"","note":""},"PRRS-XR__SK112__22.08.2026__":{"name":"PRRS-XR","amount":5192,"lot":"SK112","expiry":"22.08.2026","note":""},"InfA Multi__SK401__22.12.2022__":{"name":"InfA Multi","amount":84,"lot":"SK401","expiry":"22.12.2022","note":""},"RF14__SR700__01.04.2023__":{"name":"RF14","amount":48,"lot":"SR700","expiry":"01.04.2023","note":""},"RF21__SR700__01.02.2028__":{"name":"RF21","amount":1,"lot":"SR700","expiry":"01.02.2028","note":""}},"Эпсилон-Био Москва":{"PRRS-XR__SK112__22.08.2026__":{"name":"PRRS-XR","amount":2272,"lot":"SK112","expiry":"22.08.2026","note":""},"PRVgB__SK109__29.11.2025__":{"name":"PRVgB","amount":480,"lot":"SK109","expiry":"29.11.2025","note":""},"PCV__SK105__30.04.2026__":{"name":"PCV","amount":576,"lot":"SK105","expiry":"30.04.2026","note":""},"IBD__CK113__27.03.2026__":{"name":"IBD","amount":768,"lot":"CK113","expiry":"27.03.2026","note":""},"IBV__CK119__10.02.2027__":{"name":"IBV","amount":1288,"lot":"CK119","expiry":"10.02.2027","note":""},"Mg__CK114__07.01.2027__":{"name":"Mg","amount":542,"lot":"CK114","expiry":"07.01.2027","note":""},"Ms__CK115__02.12.2026__":{"name":"Ms","amount":550,"lot":"CK115","expiry":"02.12.2026","note":""},"ART__CK120__06.02.2027__":{"name":"ART","amount":376,"lot":"CK120","expiry":"06.02.2027","note":""},"ORT__CK108____":{"name":"ORT","amount":48,"lot":"CK108","expiry":"","note":""},"BLS__CK131__27.02.2026__":{"name":"BLS","amount":480,"lot":"CK131","expiry":"27.02.2026","note":""},"REO__CK110__20.01.2027__":{"name":"REO","amount":594,"lot":"CK110","expiry":"20.01.2027","note":""},"CSF__SK106__25.04.2024__":{"name":"CSF","amount":440,"lot":"SK106","expiry":"25.04.2024","note":""},"Sal.Gp B/C1/D__SK101__12.06.2026__":{"name":"Sal.Gp B/C1/D","amount":1440,"lot":"SK101","expiry":"12.06.2026","note":""},"ILT__SK124__09.04.2026__":{"name":"ILT","amount":472,"lot":"SK124","expiry":"09.04.2026","note":""},"CAV__SK126__25.11.2026__":{"name":"CAV","amount":960,"lot":"SK126","expiry":"25.11.2026","note":""},"FAdV__CK132__28.01.2027__":{"name":"FAdV","amount":480,"lot":"CK132","expiry":"28.01.2027","note":""},"NDV__CK116__27.11.2026__":{"name":"NDV","amount":560,"lot":"CK116","expiry":"27.11.2026","note":""},"AE__CK123____":{"name":"AE","amount":53,"lot":"CK123","expiry":"","note":""},"EDS__CK112__12.08.2026__":{"name":"EDS","amount":480,"lot":"CK112","expiry":"12.08.2026","note":""},"App OmpA__KIT6071__31.12.2026__":{"name":"App OmpA","amount":480,"lot":"KIT6071","expiry":"31.12.2026","note":""},"App ApxIV__KIT6072__04.03.2027__":{"name":"App ApxIV","amount":480,"lot":"KIT6072","expiry":"04.03.2027","note":""},"Salm.Gp B__CK118__01.05.2026__":{"name":"Salm.Gp B","amount":480,"lot":"CK118","expiry":"01.05.2026","note":""},"REF 23 (5мл)__CR100____":{"name":"REF 23 (5мл)","amount":1,"lot":"CR100","expiry":"","note":""},"REF 22 (5мл)__CR100____":{"name":"REF 22 (5мл)","amount":1,"lot":"CR100","expiry":"","note":""},"PRRS-XR__SK112__стрип.плашка__":{"name":"PRRS-XR","amount":84,"lot":"SK112","expiry":"стрип.плашка","note":""},"PRRS-XR__SK112__м+F60+A2:E61+A1:E61__":{"name":"PRRS-XR","amount":84,"lot":"SK112","expiry":"м+F60+A2:E61+A1:E61","note":""},"PRVg1__SK102__нет данных__":{"name":"PRVg1","amount":1176,"lot":"SK102","expiry":"нет данных","note":""},"PRVgB__SK109__нет данных__":{"name":"PRVgB","amount":1648,"lot":"SK109","expiry":"нет данных","note":""},"Mhyo__SK108__нет данных__":{"name":"Mhyo","amount":800,"lot":"SK108","expiry":"нет данных","note":""},"PCV2__SK105__нет данных__":{"name":"PCV2","amount":512,"lot":"SK105","expiry":"нет данных","note":""},"PRRSvXR__SK112__нет данных__":{"name":"PRRSvXR","amount":1678,"lot":"SK112","expiry":"нет данных","note":""},"Hps__SK104__нет данных__":{"name":"Hps","amount":728,"lot":"SK104","expiry":"нет данных","note":""},"AI Mult__СК401__нет данных__":{"name":"AI Mult","amount":712,"lot":"СК401","expiry":"нет данных","note":""},"ORT__СК 108__нет данных__":{"name":"ORT","amount":840,"lot":"СК 108","expiry":"нет данных","note":""},"REO__СК 110__нет данных__":{"name":"REO","amount":240,"lot":"СК 110","expiry":"нет данных","note":""},"Mg__СК 114__нет данных__":{"name":"Mg","amount":688,"lot":"СК 114","expiry":"нет данных","note":""},"ART__СК 120__нет данных__":{"name":"ART","amount":560,"lot":"СК 120","expiry":"нет данных","note":""},"CAV__СК 126__нет данных__":{"name":"CAV","amount":768,"lot":"СК 126","expiry":"нет данных","note":""},"IBD__CK113__нет данных__":{"name":"IBD","amount":928,"lot":"CK113","expiry":"нет данных","note":""},"IBV__CK119__нет данных__":{"name":"IBV","amount":408,"lot":"CK119","expiry":"нет данных","note":""},"Ms__CK115__нет данных__":{"name":"Ms","amount":864,"lot":"CK115","expiry":"нет данных","note":""},"ILT__CK124__нет данных__":{"name":"ILT","amount":1016,"lot":"CK124","expiry":"нет данных","note":""},"EDS__CK112__нет данных__":{"name":"EDS","amount":864,"lot":"CK112","expiry":"нет данных","note":""},"AE__СК123__нет данных__":{"name":"AE","amount":672,"lot":"СК123","expiry":"нет данных","note":""},"Salm D__СК117__нет данных__":{"name":"Salm D","amount":776,"lot":"СК117","expiry":"нет данных","note":""},"AI__СК121__нет данных__":{"name":"AI","amount":744,"lot":"СК121","expiry":"нет данных","note":""},"NDV__СК116__нет данных__":{"name":"NDV","amount":648,"lot":"СК116","expiry":"нет данных","note":""},"FАdV__CK132__нет данных__":{"name":"FАdV","amount":480,"lot":"CK132","expiry":"нет данных","note":""},"App ApxIV__KIT6072__нет данных__":{"name":"App ApxIV","amount":408,"lot":"KIT6072","expiry":"нет данных","note":""},"опыт App ApxIV__KIT6072__нет данных__":{"name":"опыт App ApxIV","amount":344,"lot":"KIT6072","expiry":"нет данных","note":""},"App OmpA__KIT6071__нет данных__":{"name":"App OmpA","amount":480,"lot":"KIT6071","expiry":"нет данных","note":""},"RF19__CR100__нет данных__":{"name":"RF19","amount":1,"lot":"CR100","expiry":"нет данных","note":""},"RF21__SR700__нет данных__":{"name":"RF21","amount":4,"lot":"SR700","expiry":"нет данных","note":""},"RF22__CR100__нет данных__":{"name":"RF22","amount":2,"lot":"CR100","expiry":"нет данных","note":""},"RF23__CR100__нет данных__":{"name":"RF23","amount":4,"lot":"CR100","expiry":"нет данных","note":""}},"пф Томская":{"NDV__CK116__45274__":{"name":"NDV","amount":0,"lot":"CK116","expiry":"45274","note":""},"IBD__CK113__45230__":{"name":"IBD","amount":24,"lot":"CK113","expiry":"45230","note":""},"IBV__CK119__45253__":{"name":"IBV","amount":16,"lot":"CK119","expiry":"45253","note":""},"REO__CK110__45260__":{"name":"REO","amount":96,"lot":"CK110","expiry":"45260","note":""},"AI__СК121__45230__":{"name":"AI","amount":96,"lot":"СК121","expiry":"45230","note":""},"CAV__CK126__45301__":{"name":"CAV","amount":96,"lot":"CK126","expiry":"45301","note":""},"FAdV__CK132__45300__":{"name":"FAdV","amount":0,"lot":"CK132","expiry":"45300","note":""},"ILT__CK124__45307__":{"name":"ILT","amount":432,"lot":"CK124","expiry":"45307","note":""},"AE__CK123__45360__":{"name":"AE","amount":432,"lot":"CK123","expiry":"45360","note":""},"ORT__CK108__45317__":{"name":"ORT","amount":432,"lot":"CK108","expiry":"45317","note":""}},"ТД-ВИК Новые утиные фермы":{"IBD__CK113__46401__":{"name":"IBD","amount":440,"lot":"CK113","expiry":"46401","note":""}},"Согласие":{"PRRSv XR__SK112__46232__":{"name":"PRRSv XR","amount":242,"lot":"SK112","expiry":"46232","note":""}},"Племенная индейка":{"Mg__CК114__45959__":{"name":"Mg","amount":144,"lot":"CК114","expiry":"45959","note":""},"Ms__СК115__45776__":{"name":"Ms","amount":372,"lot":"СК115","expiry":"45776","note":""},"NDV__CК116__45926__":{"name":"NDV","amount":0,"lot":"CК116","expiry":"45926","note":""},"AI__СК121__45962__":{"name":"AI","amount":0,"lot":"СК121","expiry":"45962","note":""},"InfA Multi__СК401__46070__":{"name":"InfA Multi","amount":608,"lot":"СК401","expiry":"46070","note":""},"Salm Gp B/D__СК218__46046__":{"name":"Salm Gp B/D","amount":128,"lot":"СК218","expiry":"46046","note":""},"AE__СК123__46100__":{"name":"AE","amount":272,"lot":"СК123","expiry":"46100","note":""},"ART__СК120__46151__":{"name":"ART","amount":384,"lot":"СК120","expiry":"46151","note":""},"ORT__СК108__46106__":{"name":"ORT","amount":488,"lot":"СК108","expiry":"46106","note":""}},"БМК":{"PRRSv XR__SK112__46280__":{"name":"PRRSv XR","amount":960,"lot":"SK112","expiry":"46280","note":""},"Mhyo__SK108__46310__":{"name":"Mhyo","amount":16,"lot":"SK108","expiry":"46310","note":""},"Hps__SK104__46176__":{"name":"Hps","amount":384,"lot":"SK104","expiry":"46176","note":""},"PCV2__SK105__46247__":{"name":"PCV2","amount":344,"lot":"SK105","expiry":"46247","note":""},"Salm B/C1/D__SK101__46091__":{"name":"Salm B/C1/D","amount":960,"lot":"SK101","expiry":"46091","note":""}},"Егорьевская пф":{"AI__СК119__27.03.2025__":{"name":"AI","amount":344,"lot":"СК119","expiry":"27.03.2025","note":""},"NDV__СК116__06.02.2025__":{"name":"NDV","amount":248,"lot":"СК116","expiry":"06.02.2025","note":""}},"ТД ВИК птица":{"NDV__CК 116__45926__":{"name":"NDV","amount":272,"lot":"CК 116","expiry":"45926","note":""},"IBD__СК113__45883__":{"name":"IBD","amount":384,"lot":"СК113","expiry":"45883","note":""}},"ПЗ Николаевский":{"PCV2__SK105__45590__":{"name":"PCV2","amount":224,"lot":"SK105","expiry":"45590","note":""}},"Камский бекон":{"PCV2__SK105__45590__":{"name":"PCV2","amount":96,"lot":"SK105","expiry":"45590","note":""},"Mhyo__SK108__45750__":{"name":"Mhyo","amount":192,"lot":"SK108","expiry":"45750","note":""}},"Чистогорский":{"PRRS-XR__SK112__45464__":{"name":"PRRS-XR","amount":480,"lot":"SK112","expiry":"45464","note":""},"Mhyo__SK108__45400__":{"name":"Mhyo","amount":480,"lot":"SK108","expiry":"45400","note":""},"SalmBCD__SK101__45371__":{"name":"SalmBCD","amount":376,"lot":"SK101","expiry":"45371","note":""}}};
+  const SEED_BRANCHES = {"Эпсилон-Био Белгород":"Белгород","СПК Ширяева":"Москва","Белгранкорм":"Белгород","Эпсилон-Био Москва":"Москва","пф Томская":"Москва","ТД-ВИК Новые утиные фермы":"Москва","Согласие":"Москва","Племенная индейка":"Москва","БМК":"Москва","Егорьевская пф":"Москва","ТД ВИК птица":"Москва","ПЗ Николаевский":"Москва","Камский бекон":"Москва","Чистогорский":"Москва"};
   const SEED_DATE = '08.07.2026';
 
   let grouped = {};   // { client: { kit: amount } }
@@ -444,9 +444,13 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
         alert('Не удалось прочитать файл "' + f.name + '".');
         return;
       }
-      const sheet = wb.Sheets[wb.SheetNames[0]];
-      const aoa = XLSX.utils.sheet_to_json(sheet, {header:1, defval:'', raw:true});
-      processSheet(aoa, f.name);
+      wb.SheetNames.forEach(sheetName => {
+        const sheet = wb.Sheets[sheetName];
+        const aoa = XLSX.utils.sheet_to_json(sheet, {header:1, defval:'', raw:true});
+        if(aoa.some(row => row.some(c => String(c).trim() !== ''))){
+          processSheet(aoa, f.name, sheetName);
+        }
+      });
     };
     if(isCsv) reader.readAsText(f, 'UTF-8');
     else reader.readAsArrayBuffer(f);
@@ -455,23 +459,43 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
   // ---- format detection ----
 
   function findHeaderRow(aoa){
-    // "flat" multi-client table: a header row with a "клиент" column
     for(let r=0; r<aoa.length; r++){
       const row = aoa[r];
-      if(row.some(c => /клиент|заказчик|организац/i.test(String(c)))){
-        return {type:'flat', rowIdx:r};
-      }
+      // a genuine header row has several short column-label cells; a title
+      // like "Остатки наборов и расходных материалов..." is one long
+      // sentence in a single cell and shouldn't match just because it also
+      // contains the word "набор".
+      const nonEmpty = row.filter(c => String(c).trim() !== '');
+      if(nonEmpty.length < 3 || nonEmpty.some(c => String(c).trim().length > 45)) continue;
+      const hasKit = row.some(c => /набор|биочип|наименован|показател/i.test(String(c)));
+      const hasAmount = row.some(c => /итог|остат|количество/i.test(String(c)));
+      const hasClient = row.some(c => /клиент|заказчик|организац/i.test(String(c)));
+      if(hasKit && (hasAmount || hasClient)) return {rowIdx:r};
     }
-    // "pivot" single-client ledger: a header row with "Наименование" + "Итого"
-    for(let r=0; r<aoa.length; r++){
-      const row = aoa[r];
-      const hasKit = row.some(c => /наименован/i.test(String(c)));
-      const hasTotal = row.some(c => /итог|остат/i.test(String(c)));
-      if(hasKit && hasTotal){
-        return {type:'pivot', rowIdx:r};
-      }
+    return {rowIdx:-1};
+  }
+
+  // When there's no labeled "клиент" column, some lab exports still carry a
+  // client name per row in an unlabeled trailing column (typically right
+  // after "срок годности"). Only trust it if it consistently holds
+  // non-numeric text - otherwise this isn't actually a client column.
+  function guessClientCol(aoa, headerRowIdx, expiryCol, kitCol, excludeCols){
+    if(expiryCol < 0) return -1;
+    const candidate = expiryCol + 1;
+    if(excludeCols.includes(candidate)) return -1;
+    let dataRows = 0, filled = 0, textLike = 0;
+    for(let r=headerRowIdx+1; r<aoa.length; r++){
+      const kit = String((aoa[r]||[])[kitCol]||'').trim();
+      if(!kit) continue;
+      dataRows++;
+      const v = String((aoa[r]||[])[candidate]||'').trim();
+      if(!v) continue;
+      filled++;
+      if(!/^-?\d+([.,]\d+)?$/.test(v)) textLike++;
     }
-    return {type:'unknown', rowIdx:-1};
+    // require the column to be populated on most rows (a real client column),
+    // not just a handful of stray notes like "тухляк" scattered in one cell
+    return (dataRows>=3 && filled/dataRows>=0.7 && textLike===filled) ? candidate : -1;
   }
 
   function colIndexMatching(row, regex){
@@ -498,43 +522,54 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
     return cols.every(c => c < 0 || String(row[c]||'').trim() === '');
   }
 
-  function processSheet(aoa, fileName){
-    // drop fully-empty trailing rows for detection convenience
-    const detection = findHeaderRow(aoa);
+  function processSheet(aoa, fileName, sheetName){
+    // A sheet literally named "Москва"/"Белгород" is the strongest possible
+    // branch signal - stronger than a title guess or a one-time prompt.
+    const sheetBranch = BRANCHES.find(b => norm(sheetName || '') === b.toLowerCase()) || '';
 
-    if(detection.type === 'flat'){
-      const hasBranchCol = colIndexMatching(aoa[detection.rowIdx], /филиал|город/i) >= 0;
-      const branch = hasBranchCol ? '' : (detectBranch(aoa, detection.rowIdx) || promptForBranch(fileName));
-      mergeFlatFormat(aoa, detection.rowIdx, fileName, branch);
+    const detection = findHeaderRow(aoa);
+    if(detection.rowIdx < 0){
+      openManualMapping(aoa, fileName);
+      return;
+    }
+    const headerRowIdx = detection.rowIdx;
+    const headerRow = aoa[headerRowIdx];
+    const kitCol = colIndexMatching(headerRow, /набор|биочип|наименован|показател/i);
+    const expiryCol = colIndexMatching(headerRow, /годен|срок\s*годн/i);
+    let clientCol = colIndexMatching(headerRow, /клиент|заказчик|организац/i);
+    if(clientCol < 0) clientCol = guessClientCol(aoa, headerRowIdx, expiryCol, kitCol, [kitCol]);
+
+    if(clientCol >= 0){
+      // per-row client column (labeled, or an unlabeled trailing column that
+      // looks like one) - each row already names its own client.
+      const hasBranchCol = colIndexMatching(headerRow, /филиал|город/i) >= 0;
+      const branch = sheetBranch || (hasBranchCol ? '' : (detectBranch(aoa, headerRowIdx) || promptForBranch(fileName)));
+      mergeFlatFormat(aoa, headerRowIdx, fileName, branch, sheetBranch);
       saveState();
       render();
       return;
     }
 
-    if(detection.type === 'pivot'){
-      const headerRowIdx = detection.rowIdx;
-      const headerRow = aoa[headerRowIdx];
-      const kitCol = colIndexMatching(headerRow, /наименован/i);
-      const totalCol = colIndexMatching(headerRow, /итог|остат/i);
-      const lotCol = colIndexMatching(headerRow, /^лот$|парти/i);
-      const ordinalCol = colIndexMatching(headerRow, /№|п\/п/i);
+    // No per-row client column - try the per-column date-ledger pattern
+    // (client name tagged on the comment row above the header).
+    const totalCol = colIndexMatching(headerRow, /итог|остат|количество/i);
+    const lotCol = colIndexMatching(headerRow, /^лот$|парти/i);
+    const ordinalCol = colIndexMatching(headerRow, /№|п\/п/i);
+    const kitsRemainder = extractPivotKits(aoa, headerRowIdx+1, kitCol, totalCol);
 
-      const kitsRemainder = extractPivotKits(aoa, headerRowIdx+1, kitCol, totalCol);
-
-      if(Object.keys(kitsRemainder).length){
-        const branch = detectBranch(aoa, headerRowIdx) || promptForBranch(fileName);
-        const clientCols = extractPivotClientCols(aoa, headerRowIdx, kitCol, totalCol, lotCol, ordinalCol);
-        if(clientCols.length){
-          mergeClientsFromPivot(aoa, headerRowIdx+1, kitCol, clientCols, kitsRemainder, fileName, branch);
-        } else {
-          // no per-column client tags found in this file - fall back to a single "whole lab" bucket
-          const client = extractClientName(aoa, headerRowIdx, fileName);
-          mergeKitsIntoClient(client, toEntries(kitsRemainder), fileName, branch);
-        }
-        saveState();
-        render();
-        return;
+    if(Object.keys(kitsRemainder).length){
+      const branch = sheetBranch || detectBranch(aoa, headerRowIdx) || promptForBranch(fileName);
+      const clientCols = extractPivotClientCols(aoa, headerRowIdx, kitCol, totalCol, lotCol, ordinalCol);
+      if(clientCols.length){
+        mergeClientsFromPivot(aoa, headerRowIdx+1, kitCol, clientCols, kitsRemainder, fileName, branch);
+      } else {
+        // no per-column client tags found in this file - fall back to a single "whole lab" bucket
+        const client = extractClientName(aoa, headerRowIdx, fileName);
+        mergeKitsIntoClient(client, toEntries(kitsRemainder), fileName, branch);
       }
+      saveState();
+      render();
+      return;
     }
 
     // fallback: ask user to map columns manually
@@ -609,9 +644,20 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
     Object.keys(byClient).forEach(client => mergeKitsIntoClient(client, toEntries(byClient[client]), fileName, branch));
   }
 
-  function mergeFlatFormat(aoa, headerRowIdx, fileName, branch){
+  // "ЭБ" / "ЭБ Москва" / "Эпсилон-Био Москва" name the lab's own branch
+  // stock, not a customer - resolve to a full display name and the branch
+  // that owns it (which may differ from the sheet/file it's listed under,
+  // e.g. Moscow-owned kits physically held at the Belgorod facility).
+  function resolveSelfClient(client, sheetBranch){
+    let m = client.match(/^эб\s*(москва|белгород)?$/i);
+    if(m) return {city: m[1] ? BRANCHES.find(b => b.toLowerCase()===m[1].toLowerCase()) : sheetBranch};
+    m = client.match(/эпсилон[\s-]*био\s*(москва|белгород)?/i);
+    if(m) return {city: m[1] ? BRANCHES.find(b => b.toLowerCase()===m[1].toLowerCase()) : sheetBranch};
+    return null;
+  }
+
+  function mergeFlatFormat(aoa, headerRowIdx, fileName, branch, sheetBranch){
     const headerRow = aoa[headerRowIdx];
-    const clientCol = colIndexMatching(headerRow, /клиент|заказчик|организац/i);
     const kitCol = colIndexMatching(headerRow, /набор|биочип|наименован|показател/i);
     const remainderCol = colIndexMatching(headerRow, /остат|итог|количество/i);
     const qtyCol = colIndexMatching(headerRow, /кол-во|движение|приход|расход/i);
@@ -620,16 +666,22 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
     const expiryCol = colIndexMatching(headerRow, /годен|срок\s*годн/i);
     const directionCol = colIndexMatching(headerRow, /направлен/i);
     const noteCol = colIndexMatching(headerRow, /примечан/i);
+    let clientCol = colIndexMatching(headerRow, /клиент|заказчик|организац/i);
+    if(clientCol < 0) clientCol = guessClientCol(aoa, headerRowIdx, expiryCol, kitCol, [kitCol]);
     if(clientCol < 0 || kitCol < 0 || (remainderCol < 0 && qtyCol < 0)) return;
 
     const byClient = {};      // client -> { batchKey: {name, amount, lot, expiry, note} }
     const byClientBranch = {};
     for(let r=headerRowIdx+1; r<aoa.length; r++){
       const row = aoa[r];
-      const client = String(row[clientCol]||'').trim();
+      const rawClient = String(row[clientCol]||'').trim();
       const kit = String(row[kitCol]||'').trim();
-      if(!client || !kit) continue;
+      if(!rawClient || !kit) continue;
       if(directionCol >= 0 && norm(row[directionCol]) === 'расходные материалы') continue;
+
+      const self = resolveSelfClient(rawClient, sheetBranch);
+      const client = self ? 'Эпсилон-Био ' + (self.city || rawClient.replace(/^эб\s*/i,'').trim() || sheetBranch) : rawClient;
+
       const lot = lotCol >= 0 ? String(row[lotCol]||'').trim() : '';
       const expiry = expiryCol >= 0 ? String(row[expiryCol]||'').trim() : '';
       const note = noteCol >= 0 ? String(row[noteCol]||'').trim() : '';
@@ -645,19 +697,14 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
       if(amount === null) continue;
       byClient[client][key] = {name: kit, amount, lot, expiry, note};
 
-      // The lab's own branch stock sometimes shows up as a "client" row
-      // (e.g. Организация = "Эпсилон-Био Москва") - that names a branch,
-      // not a customer, so it's tagged by city regardless of the file's
-      // own branch (kits owned by Moscow, physically held elsewhere).
-      const selfBranch = BRANCHES.find(b => /эпсилон/i.test(client) && client.toLowerCase().includes(b.toLowerCase()));
-      if(selfBranch){
-        byClientBranch[client] = selfBranch;
+      if(self && self.city){
+        byClientBranch[client] = self.city;
       } else if(branchCol >= 0){
         const matched = BRANCHES.find(b => b.toLowerCase() === norm(row[branchCol]));
         if(matched) byClientBranch[client] = matched;
       }
     }
-    Object.keys(byClient).forEach(client => mergeKitsIntoClient(client, byClient[client], fileName, byClientBranch[client] || branch));
+    Object.keys(byClient).forEach(client => mergeKitsIntoClient(client, byClient[client], fileName, byClientBranch[client] || sheetBranch || branch));
   }
 
   // ---- manual mapping fallback ----
