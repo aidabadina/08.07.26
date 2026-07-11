@@ -473,7 +473,8 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
     const detection = findHeaderRow(aoa);
 
     if(detection.type === 'flat'){
-      const branch = detectBranch(aoa, detection.rowIdx) || promptForBranch(fileName);
+      const hasBranchCol = colIndexMatching(aoa[detection.rowIdx], /филиал|город/i) >= 0;
+      const branch = hasBranchCol ? '' : (detectBranch(aoa, detection.rowIdx) || promptForBranch(fileName));
       mergeFlatFormat(aoa, detection.rowIdx, fileName, branch);
       saveState();
       render();
@@ -584,9 +585,11 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
     const kitCol = colIndexMatching(headerRow, /набор|биочип|наименован|показател/i);
     const remainderCol = colIndexMatching(headerRow, /остат|итог/i);
     const qtyCol = colIndexMatching(headerRow, /кол-во|количество|движение|приход|расход/i);
+    const branchCol = colIndexMatching(headerRow, /филиал|город/i);
     if(clientCol < 0 || kitCol < 0 || (remainderCol < 0 && qtyCol < 0)) return;
 
     const byClient = {};
+    const byClientBranch = {};
     for(let r=headerRowIdx+1; r<aoa.length; r++){
       const row = aoa[r];
       const client = String(row[clientCol]||'').trim();
@@ -600,8 +603,12 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
         const v = toNumber(row[qtyCol]);
         if(v !== null) byClient[client][kit] = (byClient[client][kit]||0) + v;
       }
+      if(branchCol >= 0){
+        const matched = BRANCHES.find(b => b.toLowerCase() === norm(row[branchCol]));
+        if(matched) byClientBranch[client] = matched;
+      }
     }
-    Object.keys(byClient).forEach(client => mergeKitsIntoClient(client, byClient[client], fileName, branch));
+    Object.keys(byClient).forEach(client => mergeKitsIntoClient(client, byClient[client], fileName, byClientBranch[client] || branch));
   }
 
   // ---- manual mapping fallback ----
