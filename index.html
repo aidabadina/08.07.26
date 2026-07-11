@@ -202,7 +202,7 @@
       <label class="low-only"><input type="checkbox" id="lowOnly"> только с малым остатком</label>
     </div>
     <div class="meta" id="meta"></div>
-    <button id="hardReset" class="reset-btn">Сбросить и загрузить актуальные данные заново</button>
+    <button id="hardReset" class="reset-btn">Очистить всё (пустой список)</button>
   </div>
 </header>
 
@@ -309,11 +309,11 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
   const lowOnlyBox = document.getElementById('lowOnly');
 
   document.getElementById('hardReset').addEventListener('click', function(){
-    if(!confirm('Стереть все текущие данные в этом браузере и заново подставить актуальные встроенные данные?')) return;
-    localStorage.removeItem(LS_GROUPED);
-    localStorage.removeItem(LS_SOURCES);
-    localStorage.removeItem(LS_BRANCHES);
-    localStorage.removeItem(LS_SEED_VERSION);
+    if(!confirm('Удалить все данные из этого браузера и оставить пустой список? Встроенные данные подставлены не будут - потребуется загрузить файлы заново.')) return;
+    localStorage.setItem(LS_GROUPED, JSON.stringify({}));
+    localStorage.setItem(LS_SOURCES, JSON.stringify([]));
+    localStorage.setItem(LS_BRANCHES, JSON.stringify({}));
+    localStorage.setItem(LS_SEED_VERSION, String(SEED_VERSION));
     location.reload();
   });
 
