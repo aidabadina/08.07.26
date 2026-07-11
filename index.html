@@ -50,6 +50,10 @@
   button.danger{color:var(--danger); border-color:var(--danger); background:#fff;}
   #file{display:none;}
   .meta{font-size:12px; color:var(--muted); margin-top:8px;}
+  .reset-btn{
+    display:block; width:100%; margin-top:10px; padding:8px; font-size:12px;
+    color:var(--danger); background:#fff; border:1px solid #f3d0d0; border-radius:8px; cursor:pointer;
+  }
   main{padding:12px 14px 80px;}
   .client-card{
     background:var(--card); border:1px solid var(--border); border-radius:14px;
@@ -198,6 +202,7 @@
       <label class="low-only"><input type="checkbox" id="lowOnly"> только с малым остатком</label>
     </div>
     <div class="meta" id="meta"></div>
+    <button id="hardReset" class="reset-btn">Сбросить и загрузить актуальные данные заново</button>
   </div>
 </header>
 
@@ -302,6 +307,15 @@ if(xr(e,"index.xml"))throw new Error("Unsupported NUMBERS 09 file");throw new Er
   const metaEl = document.getElementById('meta');
   const thresholdInput = document.getElementById('threshold');
   const lowOnlyBox = document.getElementById('lowOnly');
+
+  document.getElementById('hardReset').addEventListener('click', function(){
+    if(!confirm('Стереть все текущие данные в этом браузере и заново подставить актуальные встроенные данные?')) return;
+    localStorage.removeItem(LS_GROUPED);
+    localStorage.removeItem(LS_SOURCES);
+    localStorage.removeItem(LS_BRANCHES);
+    localStorage.removeItem(LS_SEED_VERSION);
+    location.reload();
+  });
 
   const overlay = document.getElementById('overlay');
   const mapClientNameInput = document.getElementById('mapClientName');
