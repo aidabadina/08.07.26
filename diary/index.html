@@ -33,6 +33,47 @@
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
+  <style>
+    html, body { background: #0D0520; margin: 0; height: 100%; }
+    #boot-loader {
+      position: fixed; inset: 0; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 16px;
+      color: #9E8FBF; font: 15px/1.5 -apple-system, sans-serif; text-align: center;
+      padding: 0 24px;
+    }
+    #boot-spinner {
+      width: 34px; height: 34px; border-radius: 50%;
+      border: 3px solid rgba(212,168,67,.25); border-top-color: #D4A843;
+      animation: boot-spin 1s linear infinite;
+    }
+    @keyframes boot-spin { to { transform: rotate(360deg); } }
+    #boot-error { color: #E08A8A; font-size: 13px; word-break: break-word; display: none; }
+  </style>
+  <div id="boot-loader">
+    <div id="boot-spinner"></div>
+    <div>Загрузка дневника…<br><small>при первом открытии может занять до минуты</small></div>
+    <div id="boot-error"></div>
+  </div>
+  <script>
+    // Убрать заставку, когда Flutter отрисовал первый кадр
+    window.addEventListener('flutter-first-frame', function () {
+      var el = document.getElementById('boot-loader');
+      if (el) el.remove();
+    });
+    // Показать ошибку запуска вместо пустого экрана
+    function bootShowError(msg) {
+      var el = document.getElementById('boot-error');
+      var sp = document.getElementById('boot-spinner');
+      if (sp) sp.style.display = 'none';
+      if (el) { el.style.display = 'block'; el.textContent = 'Ошибка запуска: ' + msg; }
+    }
+    window.addEventListener('error', function (e) {
+      bootShowError(e.message || String(e.error || e));
+    });
+    window.addEventListener('unhandledrejection', function (e) {
+      bootShowError(String(e.reason || 'unknown'));
+    });
+  </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
