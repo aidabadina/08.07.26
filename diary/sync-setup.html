@@ -70,19 +70,53 @@ function doPost(e) {
     var inboxSheet = getSheet_(ss, 'Входящие');
     var archive = getSheet_(ss, 'Импортировано');
 
-    // 1. Забрать «Входящие»
+    // 1. Забрать «Входящие».
+    // Поддерживаются два формата вставки:
+    //  а) простой: A=Текст, B=Заголовок, C=Тип;
+    //  б) рабочий список задач: A=Задачи, B=Ответственный, C=Статус,
+    //     D=Срок, E=Примечание — строки со статусом «выполнено»
+    //     не импортируются, остальные становятся задачами, а срок,
+    //     ответственный и примечание дописываются в текст.
     var values = inboxSheet.getDataRange().getValues();
     var inbox = [];
     var toArchive = [];
+
+    // Определяем формат по строке-шапке
+    var worklist = false;
     for (var i = 0; i < values.length; i++) {
-      var text = String(values[i][0] || '').trim();
-      var title = String(values[i][1] || '').trim();
-      var type = String(values[i][2] || '').trim();
-      if (!text && !title) continue;
-      if (text === 'Текст' && i === 0) continue; // шапка
-      inbox.push({ content: text || title, title: text ? title : '', type: type || 'Задача' });
-      toArchive.push([new Date(), text, title, type]);
+      var h0 = cellStr_(values[i][0]).toLowerCase();
+      var h1 = cellStr_(values[i][1]).toLowerCase();
+      var h2 = cellStr_(values[i][2]).toLowerCase();
+      if (h0 === 'задачи' && (h1 === 'ответственный' || h2 === 'статус')) {
+        worklist = true;
+        break;
+      }
     }
+
+    for (var i = 0; i < values.length; i++) {
+      var text = cellStr_(values[i][0]);
+      var b = cellStr_(values[i][1]);
+      var c = cellStr_(values[i][2]);
+      if (!text && !b) continue;
+      var low = text.toLowerCase();
+      if (low === 'текст' || low === 'задачи') continue; // строки-шапки
+
+      if (worklist) {
+        toArchive.push([new Date(), text, b, c]);
+        if (c.toLowerCase().indexOf('выполнен') !== -1) continue; // уже сделано
+        var due = cellStr_(values[i][3]);
+        var note = cellStr_(values[i][4]);
+        var parts = [text];
+        if (due) parts.push('Срок: ' + due);
+        if (b) parts.push('Отв.: ' + b);
+        if (note) parts.push(note);
+        inbox.push({ content: parts.join(' | '), title: '', type: 'Задача' });
+      } else {
+        toArchive.push([new Date(), text, b, c]);
+        inbox.push({ content: text || b, title: text ? b : '', type: c || 'Задача' });
+      }
+    }
+
     if (toArchive.length) {
       archive.getRange(archive.getLastRow() + 1, 1, toArchive.length, 4).setValues(toArchive);
       inboxSheet.clearContents();
@@ -113,6 +147,15 @@ function getSheet_(ss, name) {
     if (name === 'Импортировано') sh.getRange(1, 1, 1, 4).setValues([['Когда', 'Текст', 'Заголовок', 'Тип']]);
   }
   return sh;
+}
+
+// Ячейка → строка; даты приводятся к виду ДД.ММ.ГГГГ.
+function cellStr_(v) {
+  if (v === null || v === undefined) return '';
+  if (Object.prototype.toString.call(v) === '[object Date]') {
+    return Utilities.formatDate(v, Session.getScriptTimeZone(), 'dd.MM.yyyy');
+  }
+  return String(v).trim();
 }
 
 function json_(obj) {
@@ -147,8 +190,12 @@ function json_(obj) {
 <h2>Как перенести задачи из вашего Excel</h2>
 <ol>
   <li>Откройте в таблице лист <b>«Входящие»</b>.</li>
-  <li>Скопируйте задачи из своего Excel и вставьте в столбец
-      <b>A («Текст»)</b> — по одной задаче на строку.</li>
+  <li>Вставьте задачи одним из двух способов:
+    <br>— просто список: тексты задач в столбец <b>A</b>, по одной на строку;
+    <br>— <b>рабочая таблица целиком</b>, вместе с шапкой
+    «Задачи | Ответственный | Статус | Срок | Примечание» — скрипт сам
+    её распознает: строки со статусом «выполнено» пропустит, а срок,
+    ответственного и примечание допишет в текст задачи.</li>
   <li>В приложении: Профиль → <b>Синхронизировать сейчас</b>.</li>
   <li>Задачи появятся в телефоне (фильтр «Задачи»), а из «Входящих»
       переедут в лист «Импортировано».</li>
