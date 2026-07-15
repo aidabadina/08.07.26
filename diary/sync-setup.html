@@ -158,6 +158,49 @@ function cellStr_(v) {
   return String(v).trim();
 }
 
+// ═══ Почта → задачи ═══════════════════════════════════════════
+// Письма, пересланные на ВАШ_АДРЕС+zadachi@gmail.com, попадают
+// в лист «Входящие» и при следующей синхронизации — в приложение.
+
+var MAIL_TAG = 'zadachi';
+var MAIL_DONE_LABEL = 'Дневник-обработано';
+
+// Запустите ОДИН РАЗ вручную (выбрать «setupMail» → Выполнить):
+// включает проверку почты каждые 10 минут.
+function setupMail() {
+  ScriptApp.getProjectTriggers().forEach(function (t) {
+    if (t.getHandlerFunction() === 'processMail') ScriptApp.deleteTrigger(t);
+  });
+  ScriptApp.newTrigger('processMail').timeBased().everyMinutes(10).create();
+  processMail();
+}
+
+function processMail() {
+  var me = Session.getActiveUser().getEmail();
+  if (!me) return;
+  var alias = me.replace('@', '+' + MAIL_TAG + '@');
+  var label = GmailApp.getUserLabelByName(MAIL_DONE_LABEL) ||
+      GmailApp.createLabel(MAIL_DONE_LABEL);
+  var threads = GmailApp.search('to:' + alias + ' -label:' + MAIL_DONE_LABEL);
+  if (!threads.length) return;
+
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var inbox = getSheet_(ss, 'Входящие');
+
+  threads.forEach(function (th) {
+    var msg = th.getMessages()[th.getMessageCount() - 1];
+    var subject = msg.getSubject() || '';
+    subject = subject.replace(/^((re|fw|fwd|пересл\w*)\s*:\s*)+/i, '').trim();
+    if (!subject) subject = '(письмо без темы)';
+    var body = (msg.getPlainBody() || '').replace(/\s+/g, ' ').trim();
+    if (body.length > 300) body = body.slice(0, 300) + '…';
+    var link = 'https://mail.google.com/mail/u/0/#all/' + msg.getId();
+    var text = subject + (body ? ' | ' + body : '') + ' | Письмо: ' + link;
+    inbox.appendRow([text, '', 'Задача']);
+    th.addLabel(label);
+  });
+}
+
 function json_(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
@@ -200,6 +243,25 @@ function json_(obj) {
   <li>Задачи появятся в телефоне (фильтр «Задачи»), а из «Входящих»
       переедут в лист «Импортировано».</li>
 </ol>
+
+<h2>Почта → задачи (по желанию)</h2>
+<p>Можно пересылать письма — и они будут становиться задачами. Настройка один раз:</p>
+<ol>
+  <li>Убедитесь, что в таблице стоит свежая версия скрипта с этой страницы
+      (в нём есть функция <code>setupMail</code>).</li>
+  <li>В редакторе Apps Script: в панели над кодом есть выпадающий список функций
+      (рядом с кнопками «Выполнить» и «Отладка») — выберите в нём
+      <b>setupMail</b> и нажмите <b>Выполнить</b>.</li>
+  <li>Google снова спросит разрешения (теперь и на почту) — как в прошлый раз:
+      «Дополнительно» → «Перейти…» → <b>Разрешить</b>.</li>
+</ol>
+<p>Готово. Теперь пересылайте нужные письма на адрес
+<b>ВАШ_АДРЕС<span style="color:#D4A843">+zadachi</span>@gmail.com</b>
+(например, ivanova<span style="color:#D4A843">+zadachi</span>@gmail.com — это ваш же
+ящик, отдельный заводить не нужно). Каждые 10 минут скрипт забирает такие письма
+в «Входящие»: тема письма станет задачей, к ней добавится начало текста и ссылка
+на письмо. В телефоне задача появится при следующей синхронизации.
+Обработанные письма помечаются ярлыком «Дневник-обработано».</p>
 
 <p class="note">Важно: лист «Записи» приложение переписывает целиком при каждой
 синхронизации — не редактируйте его вручную, правки затрутся. Всё новое
