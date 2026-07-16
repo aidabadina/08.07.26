@@ -181,13 +181,19 @@ function processMail() {
   var alias = me.replace('@', '+' + MAIL_TAG + '@');
   var label = GmailApp.getUserLabelByName(MAIL_DONE_LABEL) ||
       GmailApp.createLabel(MAIL_DONE_LABEL);
-  var threads = GmailApp.search('to:' + alias + ' -label:' + MAIL_DONE_LABEL);
+  // Ярлык проверяем в коде, а не в поисковом запросе:
+  // русские названия ярлыков в поиске Gmail работают ненадёжно.
+  var threads = GmailApp.search('to:' + alias, 0, 50);
   if (!threads.length) return;
 
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var inbox = getSheet_(ss, 'Входящие');
 
   threads.forEach(function (th) {
+    var done = th.getLabels().some(function (l) {
+      return l.getName() === MAIL_DONE_LABEL;
+    });
+    if (done) return;
     var msg = th.getMessages()[th.getMessageCount() - 1];
     var subject = msg.getSubject() || '';
     subject = subject.replace(/^((re|fw|fwd|пересл\w*)\s*:\s*)+/i, '').trim();
