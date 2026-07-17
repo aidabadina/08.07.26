@@ -48343,7 +48343,9 @@ A.awp.prototype={
 $1(a){return new A.ro(this.a,null)},
 $S:142}
 A.awu.prototype={
-$2(a,b){return b.z.aV(0,a.z)},
+$2(a,b){var s=a.r==="task_done"?1:0,r=b.r==="task_done"?1:0
+if(s!==r)return s-r
+return b.z.aV(0,a.z)},
 $S:95}
 A.awv.prototype={
 $1(a){var s=a.r
