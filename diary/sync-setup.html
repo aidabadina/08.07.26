@@ -131,7 +131,10 @@ function doPost(e) {
     });
     if (rows.length) entries.getRange(2, 1, rows.length, HEADER.length).setValues(rows);
 
-    return json_({ ok: true, inbox: inbox });
+    // 3. Закупки: применить изменения с телефона и вернуть реестр
+    var purchases = syncPurchases_(ss, data.purchaseUpdates || []);
+
+    return json_({ ok: true, inbox: inbox, purchases: purchases });
   } catch (err) {
     return json_({ ok: false, error: String(err) });
   } finally {
@@ -145,8 +148,81 @@ function getSheet_(ss, name) {
     sh = ss.insertSheet(name);
     if (name === 'Входящие') sh.getRange(1, 1, 1, 3).setValues([['Текст', 'Заголовок', 'Тип']]);
     if (name === 'Импортировано') sh.getRange(1, 1, 1, 4).setValues([['Когда', 'Текст', 'Заголовок', 'Тип']]);
+    if (name === 'Закупки') sh.getRange(1, 1, 1, P_HEADER.length).setValues([P_HEADER]);
   }
   return sh;
+}
+
+// ═══ Закупки ══════════════════════════════════════════════════
+// Столбцы A–L повторяют рабочий Excel-реестр (вставляйте как есть),
+// M — Статус («закрыта» / «в работе»), N — Дата закрытия, O — id.
+
+var P_HEADER = ['Оплата', 'Сумма', 'Поставщик', 'Сроки поставки по договору',
+  'Ориентировочные даты поставки', 'Отдел', 'Место доставки', 'Наименование',
+  'Тендер', '', 'ЭДО', 'Закрывающие', 'Статус', 'Дата закрытия', 'id'];
+var P_GREEN = '#c9e7d0';
+var P_YELLOW = '#fdf3c4';
+
+function syncPurchases_(ss, updates) {
+  var sh = getSheet_(ss, 'Закупки');
+
+  // Шапка: если её нет (реестр вставлен с первой строки) — добавить
+  if (cellStr_(sh.getRange(1, 1).getValue()) !== 'Оплата') {
+    sh.insertRowBefore(1);
+    sh.getRange(1, 1, 1, P_HEADER.length).setValues([P_HEADER]);
+  }
+
+  // Применить изменения с телефона (по id); новые — добавить строками
+  var values = sh.getDataRange().getValues();
+  var rowById = {};
+  for (var r = 1; r < values.length; r++) {
+    var id0 = cellStr_(values[r][14]);
+    if (id0) rowById[id0] = r + 1;
+  }
+  (updates || []).forEach(function (u) {
+    var status = u.closed ? 'закрыта' : 'в работе';
+    var row = rowById[u.id];
+    if (row) {
+      sh.getRange(row, 13).setValue(status);
+      sh.getRange(row, 14).setValue(u.closedDate || '');
+    } else {
+      sh.appendRow([u.pay || '', u.amount || '', u.supplier || '',
+        u.term || '', u.eta || '', u.dept || '', u.place || '',
+        u.name || '', u.tender || '', '', u.edo || '', u.docs || '',
+        status, u.closedDate || '', u.id]);
+    }
+  });
+
+  // Прочитать реестр: раздать id, нормализовать статусы, раскрасить
+  values = sh.getDataRange().getValues();
+  var list = [];
+  for (var r = 1; r < values.length; r++) {
+    var v = values[r];
+    var supplier = cellStr_(v[2]);
+    var name = cellStr_(v[7]);
+    if (!supplier && !name) continue;
+    if (supplier === 'Поставщик') continue; // повторная шапка из вставки
+
+    var id = cellStr_(v[14]);
+    if (!id) {
+      id = 'p' + Date.now() + '_' + r;
+      sh.getRange(r + 1, 15).setValue(id);
+    }
+    var status = cellStr_(v[12]).toLowerCase();
+    if (!status) sh.getRange(r + 1, 13).setValue('в работе');
+    var closed = status.indexOf('закрыт') !== -1;
+    sh.getRange(r + 1, 1, 1, P_HEADER.length)
+      .setBackground(closed ? P_GREEN : P_YELLOW);
+
+    list.push({
+      id: id, pay: cellStr_(v[0]), amount: cellStr_(v[1]),
+      supplier: supplier, term: cellStr_(v[3]), eta: cellStr_(v[4]),
+      dept: cellStr_(v[5]), place: cellStr_(v[6]), name: name,
+      tender: cellStr_(v[8]), edo: cellStr_(v[10]), docs: cellStr_(v[11]),
+      closed: closed, closedDate: cellStr_(v[13])
+    });
+  }
+  return list;
 }
 
 // Ячейка → строка; даты приводятся к виду ДД.ММ.ГГГГ.
@@ -249,6 +325,18 @@ function json_(obj) {
   <li>Задачи появятся в телефоне (фильтр «Задачи»), а из «Входящих»
       переедут в лист «Импортировано».</li>
 </ol>
+
+<h2>Реестр закупок</h2>
+<p>После обновления скрипта и первой синхронизации в таблице появится лист
+<b>«Закупки»</b>. Скопируйте туда строки своего рабочего Excel-реестра —
+столбцы те же: Оплата, Сумма, Поставщик, Сроки, Ориентировочные даты, Отдел,
+Место доставки, Наименование, Тендер, (пусто), ЭДО, Закрывающие. Вставляйте
+начиная со строки 2 (под шапкой).</p>
+<p>При каждой синхронизации скрипт сам: раздаёт закупкам номера (столбец id),
+проставляет статус «в работе», красит строки — <b>жёлтым</b> в работе,
+<b>зелёным</b> закрытые. Статус можно менять и в таблице (написать «закрыта»
+в столбце «Статус»), и с телефона — вкладка «Закупки» → карточка →
+«Отметить закрытой».</p>
 
 <h2>Почта → задачи (по желанию)</h2>
 <p>Можно пересылать письма — и они будут становиться задачами. Настройка один раз:</p>
