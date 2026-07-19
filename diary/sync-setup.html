@@ -55,7 +55,7 @@
 var HEADER = ['id','Дата','Время','Тип','Заголовок','Текст','Выполнено'];
 
 function doGet() {
-  return json_({ ok: true, message: 'Скрипт дневника работает' });
+  return json_({ ok: true, message: 'Скрипт дневника работает', version: 3 });
 }
 
 function doPost(e) {
