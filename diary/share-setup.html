@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Дневник — письма и заметки одним касанием</title>
+<style>
+  body { background:#0D0520; color:#E8E2F5; font:16px/1.6 -apple-system, sans-serif;
+         margin:0; padding:24px 16px 60px; }
+  main { max-width:640px; margin:0 auto; }
+  h1 { color:#D4A843; font-size:22px; }
+  h2 { color:#D4A843; font-size:17px; margin-top:30px; }
+  ol li, ul li { margin-bottom:10px; }
+  code { background:#1A0A3E; padding:2px 6px; border-radius:6px; font-size:14px;
+         word-break:break-all; }
+  .box { position:relative; background:#1A0A3E; border:1px solid rgba(212,168,67,.3);
+         border-radius:12px; padding:14px 14px 14px; margin:12px 0; }
+  .box b { color:#D4A843; }
+  button.copy { background:#D4A843; color:#1A0A3E; border:none; border-radius:8px;
+          padding:9px 16px; font-weight:700; font-size:13px; margin-top:10px; }
+  .note { color:#9E8FBF; font-size:14px; background:#1A0A3E; border-radius:12px;
+          padding:12px 14px; }
+  .step { color:#9E8FBF; font-size:14px; }
+</style>
+</head>
+<body>
+<main>
+<h1>Письма и заметки в дневник одним касанием</h1>
+<p>Настраивается один раз, минут за пять. После этого из любого приложения на
+iPhone — почты, Safari, мессенджера — выделенный текст попадает в дневник
+через кнопку «Поделиться». Google-скрипт для этого не нужен: текст идёт
+напрямую в приложение.</p>
+
+<h2>Шаг 1. Создайте быструю команду</h2>
+<ol>
+  <li>Откройте приложение <b>«Быстрые команды»</b> (оно есть на каждом iPhone).</li>
+  <li>Вкладка <b>«Мои команды»</b> → знак <b>+</b> вверху справа.</li>
+  <li>Нажмите <b>«Добавить действие»</b> → в поиске наберите
+      <b>URL</b> → выберите действие <b>«URL»</b>.</li>
+  <li>В поле URL вставьте эту строку целиком:</li>
+</ol>
+
+<div class="box">
+  <code id="url">https://aidabadina.github.io/08.07.26/diary/?type=task&amp;add=</code>
+  <br>
+  <button class="copy" onclick="navigator.clipboard.writeText('https://aidabadina.github.io/08.07.26/diary/?type=task&add=').then(()=>{this.textContent='Скопировано ✓'})">Скопировать ссылку</button>
+</div>
+
+<ol start="5">
+  <li>Сразу после <code>add=</code> (в конце строки, без пробела) нужно
+      подставить текст. Для этого нажмите на поле URL и в панели над
+      клавиатурой выберите переменную <b>«Вход быстрой команды»</b>
+      (Shortcut Input). Она встанет в конец ссылки.</li>
+  <li>Добавьте второе действие: <b>«Открыть URL»</b> (поиск: <i>открыть URL</i>).</li>
+</ol>
+
+<h2>Шаг 2. Включите кнопку «Поделиться»</h2>
+<ol>
+  <li>Вверху экрана команды нажмите значок <b>ⓘ</b> (или «Настройки команды»).</li>
+  <li>Включите переключатель <b>«Показывать в меню «Поделиться»»</b>.</li>
+  <li>Назовите команду, например <b>«В дневник»</b>, и нажмите
+      <b>«Готово»</b>.</li>
+</ol>
+
+<h2>Как пользоваться</h2>
+<ul>
+  <li><b>Письмо из почты:</b> откройте письмо → кнопка «Поделиться» →
+      пролистайте вниз до <b>«В дневник»</b> → готово, задача в дневнике.</li>
+  <li><b>Кусок текста откуда угодно:</b> выделите текст → «Поделиться» →
+      «В дневник».</li>
+  <li><b>Ссылка на статью:</b> в Safari «Поделиться» → «В дневник».</li>
+</ul>
+<p>Дневник откроется сам, внизу мелькнёт «Задача добавлена» — и запись
+уже в списке. Если у вас настроена Google Таблица, она уедет туда при
+ближайшей синхронизации.</p>
+
+<h2>Хотите вторую команду — для личных заметок?</h2>
+<p>Повторите те же шаги, но вставьте другую ссылку и назовите команду
+«В личный дневник»:</p>
+<div class="box">
+  <code>https://aidabadina.github.io/08.07.26/diary/?type=note&amp;sphere=personal&amp;add=</code>
+  <br>
+  <button class="copy" onclick="navigator.clipboard.writeText('https://aidabadina.github.io/08.07.26/diary/?type=note&sphere=personal&add=').then(()=>{this.textContent='Скопировано ✓'})">Скопировать ссылку</button>
+</div>
+<p class="step">Разница только в конце: <code>type=task</code> — задача в раздел
+«Работа», <code>type=note&amp;sphere=personal</code> — запись в «Личное».</p>
+
+<p class="note">Если текст очень длинный (несколько экранов), браузер может
+его обрезать — в дневник попадёт начало. Для длинных писем надёжнее
+пересылка на почту <b>+zadachi</b>, она никакого ограничения не имеет.
+Обычные письма и заметки проходят целиком.</p>
+</main>
+</body>
+</html>
