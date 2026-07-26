@@ -55,7 +55,7 @@
 var HEADER = ['id','Дата','Время','Тип','Заголовок','Текст','Выполнено'];
 
 function doGet() {
-  return json_({ ok: true, message: 'Скрипт дневника работает', version: 3 });
+  return json_({ ok: true, message: 'Скрипт дневника работает', version: 4 });
 }
 
 function doPost(e) {
@@ -131,7 +131,10 @@ function doPost(e) {
     });
     if (rows.length) entries.getRange(2, 1, rows.length, HEADER.length).setValues(rows);
 
-    // 3. Закупки: применить изменения с телефона и вернуть реестр
+    // 3. Личный дневник — на отдельный лист
+    if (data.personal) syncPersonal_(ss, data.personal);
+
+    // 4. Закупки: применить изменения с телефона и вернуть реестр
     var purchases = syncPurchases_(ss, data.purchaseUpdates || []);
 
     return json_({ ok: true, inbox: inbox, purchases: purchases });
@@ -151,6 +154,26 @@ function getSheet_(ss, name) {
     if (name === 'Закупки') sh.getRange(1, 1, 1, P_HEADER.length).setValues([P_HEADER]);
   }
   return sh;
+}
+
+// ═══ Личный дневник ═══════════════════════════════════════════
+// Лист «Личное» — зеркало личного раздела приложения.
+// Рабочие записи туда не попадают и наоборот.
+
+var L_HEADER = ['id', 'Дата', 'Время', 'Метка', 'Заголовок', 'Текст'];
+
+function syncPersonal_(ss, rows) {
+  var sh = ss.getSheetByName('Личное');
+  if (!sh) {
+    sh = ss.insertSheet('Личное');
+  }
+  sh.clearContents();
+  sh.getRange(1, 1, 1, L_HEADER.length).setValues([L_HEADER]);
+  if (!rows.length) return;
+  var values = rows.map(function (r) {
+    return [r.id, r.date, r.time, r.tag || '', r.title || '', r.content || ''];
+  });
+  sh.getRange(2, 1, values.length, L_HEADER.length).setValues(values);
 }
 
 // ═══ Закупки ══════════════════════════════════════════════════
@@ -325,6 +348,12 @@ function json_(obj) {
   <li>Задачи появятся в телефоне (фильтр «Задачи»), а из «Входящих»
       переедут в лист «Импортировано».</li>
 </ol>
+
+<h2>Личный дневник</h2>
+<p>В приложении есть переключатель <b>«Работа / Личное»</b>. Личные записи
+(мысли, идеи, записи дня) не смешиваются с рабочими и выгружаются на
+отдельный лист <b>«Личное»</b> — он создастся сам при первой синхронизации.
+Лист «Записи» остаётся только для рабочего.</p>
 
 <h2>Реестр закупок</h2>
 <p>После обновления скрипта и первой синхронизации в таблице появится лист
