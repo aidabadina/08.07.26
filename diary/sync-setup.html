@@ -10,6 +10,7 @@
   main { max-width:640px; margin:0 auto; }
   h1 { color:#D4A843; font-size:22px; }
   h2 { color:#D4A843; font-size:17px; margin-top:28px; }
+  h3 { color:#E8E2F5; font-size:15px; margin-top:22px; margin-bottom:6px; }
   ol li { margin-bottom:10px; }
   code { background:#1A0A3E; padding:2px 6px; border-radius:6px; font-size:14px; }
   .box { position:relative; background:#1A0A3E; border:1px solid rgba(212,168,67,.3);
@@ -55,7 +56,12 @@
 var HEADER = ['id','Дата','Время','Тип','Заголовок','Текст','Выполнено'];
 
 function doGet() {
-  return json_({ ok: true, message: 'Скрипт дневника работает', version: 4 });
+  return json_({
+    ok: true,
+    message: 'Скрипт дневника работает',
+    version: 5,
+    mailTo: myMailAlias_()
+  });
 }
 
 function doPost(e) {
@@ -151,6 +157,7 @@ function getSheet_(ss, name) {
     sh = ss.insertSheet(name);
     if (name === 'Входящие') sh.getRange(1, 1, 1, 3).setValues([['Текст', 'Заголовок', 'Тип']]);
     if (name === 'Импортировано') sh.getRange(1, 1, 1, 4).setValues([['Когда', 'Текст', 'Заголовок', 'Тип']]);
+    if (name === 'Письма') sh.getRange(1, 1, 1, 3).setValues([['Номер письма', 'Когда', 'Тема']]);
     if (name === 'Закупки') sh.getRange(1, 1, 1, P_HEADER.length).setValues([P_HEADER]);
   }
   return sh;
@@ -258,11 +265,15 @@ function cellStr_(v) {
 }
 
 // ═══ Почта → задачи ═══════════════════════════════════════════
-// Письма, пересланные на ВАШ_АДРЕС+zadachi@gmail.com, попадают
-// в лист «Входящие» и при следующей синхронизации — в приложение.
+// Пересылаете письмо на СВОЙ адрес с пометкой +zadachi
+// (например ivan+zadachi@gmail.com) — оно приходит в тот же ящик,
+// а скрипт превращает его в задачу.
+//
+// Обработанные письма запоминаются по номеру письма в листе
+// «Письма». Ярлыки Gmail не используются: раньше именно они
+// и не срабатывали.
 
 var MAIL_TAG = 'zadachi';
-var MAIL_DONE_LABEL = 'Дневник-обработано';
 
 // Запустите ОДИН РАЗ вручную (выбрать «setupMail» → Выполнить):
 // включает проверку почты каждые 10 минут.
@@ -271,39 +282,98 @@ function setupMail() {
     if (t.getHandlerFunction() === 'processMail') ScriptApp.deleteTrigger(t);
   });
   ScriptApp.newTrigger('processMail').timeBased().everyMinutes(10).create();
-  processMail();
+  return checkMail();
+}
+
+// Адрес, на который надо пересылать письма.
+function myMailAlias_() {
+  var me = Session.getEffectiveUser().getEmail() ||
+      Session.getActiveUser().getEmail();
+  if (!me) return '';
+  return me.replace('@', '+' + MAIL_TAG + '@');
+}
+
+// ПРОВЕРКА. Выберите «checkMail» → Выполнить → внизу откроется
+// журнал выполнения, там будет написано простым текстом,
+// что нашлось и что добавилось.
+function checkMail() {
+  var alias = myMailAlias_();
+  if (!alias) {
+    var m0 = 'Не удалось определить ваш адрес Gmail. Запустите функцию ' +
+        'вручную и разрешите доступ.';
+    Logger.log(m0);
+    return m0;
+  }
+  var added = processMail();
+  var msg = 'Пересылайте письма на адрес: ' + alias +
+      '\nНайдено новых писем: ' + added.found +
+      '\nДобавлено задач: ' + added.added;
+  if (added.found === 0) {
+    msg += '\n\nПисем не найдено. Проверьте, что вы переслали письмо ' +
+        'именно на ' + alias + ' и что оно уже дошло (обновите почту).';
+  }
+  Logger.log(msg);
+  return msg;
 }
 
 function processMail() {
-  var me = Session.getActiveUser().getEmail();
-  if (!me) return;
-  var alias = me.replace('@', '+' + MAIL_TAG + '@');
-  var label = GmailApp.getUserLabelByName(MAIL_DONE_LABEL) ||
-      GmailApp.createLabel(MAIL_DONE_LABEL);
-  // Ярлык проверяем в коде, а не в поисковом запросе:
-  // русские названия ярлыков в поиске Gmail работают ненадёжно.
-  var threads = GmailApp.search('to:' + alias, 0, 50);
-  if (!threads.length) return;
+  var alias = myMailAlias_();
+  if (!alias) return { found: 0, added: 0 };
 
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var inbox = getSheet_(ss, 'Входящие');
+  var seenSheet = getSheet_(ss, 'Письма');
+
+  // Уже обработанные письма — по идентификатору письма.
+  var seen = {};
+  var last = seenSheet.getLastRow();
+  if (last > 1) {
+    seenSheet.getRange(2, 1, last - 1, 1).getValues().forEach(function (r) {
+      if (r[0]) seen[String(r[0])] = true;
+    });
+  }
+
+  // deliveredto: — единственный оператор Gmail, который надёжно
+  // находит письма по адресу с плюсом.
+  var query = 'deliveredto:' + alias + ' newer_than:30d';
+  var threads = [];
+  try {
+    threads = GmailApp.search(query, 0, 50);
+  } catch (err) {
+    Logger.log('Ошибка поиска почты: ' + err);
+    return { found: 0, added: 0 };
+  }
+
+  var found = 0;
+  var added = 0;
+  var stamp = Utilities.formatDate(
+      new Date(), Session.getScriptTimeZone(), 'dd.MM.yyyy HH:mm');
 
   threads.forEach(function (th) {
-    var done = th.getLabels().some(function (l) {
-      return l.getName() === MAIL_DONE_LABEL;
+    th.getMessages().forEach(function (msg) {
+      var id = msg.getId();
+      if (seen[id]) return;
+      // письма, отправленные не на этот адрес, пропускаем
+      var to = (msg.getTo() + ' ' + msg.getCc()).toLowerCase();
+      if (to.indexOf(alias.toLowerCase()) === -1) return;
+      found++;
+
+      var subject = msg.getSubject() || '';
+      subject = subject.replace(/^((re|fw|fwd|пересл\w*)\s*:\s*)+/i, '').trim();
+      if (!subject) subject = '(письмо без темы)';
+      var body = (msg.getPlainBody() || '').replace(/\s+/g, ' ').trim();
+      if (body.length > 300) body = body.slice(0, 300) + '…';
+      var link = 'https://mail.google.com/mail/u/0/#all/' + id;
+      var text = subject + (body ? ' | ' + body : '') + ' | Письмо: ' + link;
+
+      inbox.appendRow([text, subject, 'Задача']);
+      seenSheet.appendRow([id, stamp, subject]);
+      seen[id] = true;
+      added++;
     });
-    if (done) return;
-    var msg = th.getMessages()[th.getMessageCount() - 1];
-    var subject = msg.getSubject() || '';
-    subject = subject.replace(/^((re|fw|fwd|пересл\w*)\s*:\s*)+/i, '').trim();
-    if (!subject) subject = '(письмо без темы)';
-    var body = (msg.getPlainBody() || '').replace(/\s+/g, ' ').trim();
-    if (body.length > 300) body = body.slice(0, 300) + '…';
-    var link = 'https://mail.google.com/mail/u/0/#all/' + msg.getId();
-    var text = subject + (body ? ' | ' + body : '') + ' | Письмо: ' + link;
-    inbox.appendRow([text, '', 'Задача']);
-    th.addLabel(label);
   });
+
+  return { found: found, added: added };
 }
 
 function json_(obj) {
@@ -367,24 +437,50 @@ function json_(obj) {
 в столбце «Статус»), и с телефона — вкладка «Закупки» → карточка →
 «Отметить закрытой».</p>
 
-<h2>Почта → задачи (по желанию)</h2>
-<p>Можно пересылать письма — и они будут становиться задачами. Настройка один раз:</p>
+<h2>Почта → задачи</h2>
+<p>Переслали письмо на свой же адрес с пометкой <b>+zadachi</b> — оно стало
+задачей в дневнике. Настройка один раз, три действия.</p>
+
+<h3>Куда пересылать</h3>
+<p>К вашему адресу перед «собакой» добавляется
+<span style="color:#D4A843">+zadachi</span>. Это не новый ящик — письмо придёт
+в вашу же почту, просто скрипт его узнает:</p>
+<div class="box">
+  <code>ivanova<span style="color:#D4A843">+zadachi</span>@gmail.com</code>
+  <div class="step">Вместо <i>ivanova</i> — ваше имя ящика. Точный адрес
+  скрипт скажет сам на шаге 3, гадать не нужно.</div>
+</div>
+
+<h3>Что сделать</h3>
 <ol>
-  <li>Убедитесь, что в таблице стоит свежая версия скрипта с этой страницы
-      (в нём есть функция <code>setupMail</code>).</li>
-  <li>В редакторе Apps Script: в панели над кодом есть выпадающий список функций
-      (рядом с кнопками «Выполнить» и «Отладка») — выберите в нём
-      <b>setupMail</b> и нажмите <b>Выполнить</b>.</li>
-  <li>Google снова спросит разрешения (теперь и на почту) — как в прошлый раз:
+  <li>Вставьте в редактор Apps Script свежий код с этой страницы (кнопка
+      «Скопировать» выше) и сохраните — значок дискеты.</li>
+  <li>Нажмите <b>Развернуть → Управление развёртываниями</b> → карандаш
+      (изменить) → «Версия» → <b>Новая версия</b> → <b>Развернуть</b>.
+      Без этого шага таблица останется на старом коде.</li>
+  <li>В панели над кодом есть выпадающий список функций (рядом с кнопками
+      «Выполнить» и «Отладка»). Выберите в нём <b>setupMail</b> и нажмите
+      <b>Выполнить</b>. Google спросит разрешения — теперь и на почту:
       «Дополнительно» → «Перейти…» → <b>Разрешить</b>.</li>
 </ol>
-<p>Готово. Теперь пересылайте нужные письма на адрес
-<b>ВАШ_АДРЕС<span style="color:#D4A843">+zadachi</span>@gmail.com</b>
-(например, ivanova<span style="color:#D4A843">+zadachi</span>@gmail.com — это ваш же
-ящик, отдельный заводить не нужно). Каждые 10 минут скрипт забирает такие письма
-в «Входящие»: тема письма станет задачей, к ней добавится начало текста и ссылка
-на письмо. В телефоне задача появится при следующей синхронизации.
-Обработанные письма помечаются ярлыком «Дневник-обработано».</p>
+
+<h3>Как проверить, что работает</h3>
+<ol>
+  <li>Перешлите себе любое письмо на адрес с <b>+zadachi</b>.</li>
+  <li>Подождите минуту, чтобы письмо дошло.</li>
+  <li>В Apps Script выберите функцию <b>checkMail</b> → <b>Выполнить</b>.</li>
+  <li>Внизу откроется «Журнал выполнения». Там будет написано по-русски:
+      на какой адрес пересылать, сколько писем нашлось и сколько задач
+      добавилось. Если нашлось 0 — журнал подскажет, что проверить.</li>
+</ol>
+<p>Дальше скрипт проверяет почту сам каждые 10 минут. Тема письма становится
+задачей, к ней добавляется начало текста и ссылка на само письмо. В телефоне
+задача появится при следующей синхронизации (вкладка «Профиль» →
+«Синхронизировать сейчас»).</p>
+<p class="note">Обработанные письма запоминаются в новом листе <b>«Письма»</b>
+по номеру письма. Ярлыки Gmail больше не используются — раньше именно из-за
+них задачи и не приходили. Если захотите, чтобы письмо обработалось заново,
+удалите его строку из листа «Письма».</p>
 
 <p class="note">Важно: лист «Записи» приложение переписывает целиком при каждой
 синхронизации — не редактируйте его вручную, правки затрутся. Всё новое
