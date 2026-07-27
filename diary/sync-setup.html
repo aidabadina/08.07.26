@@ -28,6 +28,11 @@
 <p>Один раз настроив её, вы получите: автоматическую выгрузку всех записей в таблицу
 и возможность закидывать задачи из своего Excel прямо в приложение.</p>
 
+<div class="note"><b>Если обновляете скрипт ради фотографий:</b> при развёртывании
+Google дополнительно попросит доступ к Google Диску — это нужно, чтобы снимки
+складывались в папку «Дневник — фото». Без этого разрешения всё остальное
+работает по-прежнему, а фото просто остаются в телефоне.</div>
+
 <h2>Шаг 1. Создайте таблицу</h2>
 <ol>
   <li>Откройте <a href="https://sheets.new" style="color:#D4A843">sheets.new</a>
@@ -53,7 +58,7 @@
 // При синхронизации строки уходят в приложение и переносятся в
 // лист «Импортировано».
 
-var HEADER = ['id','Дата','Время','Тип','Заголовок','Текст','Выполнено'];
+var HEADER = ['id','Дата','Время','Тип','Заголовок','Текст','Выполнено','Фото'];
 
 function doGet(e) {
   // Добавьте ?mail=1 к ссылке — скрипт проверит почту прямо сейчас
@@ -65,7 +70,7 @@ function doGet(e) {
   return json_({
     ok: true,
     message: 'Скрипт дневника работает',
-    version: 8,
+    version: 9,
     mailTo: myMailAlias_()
   });
 }
@@ -151,7 +156,8 @@ function doPost(e) {
     entries.clearContents();
     entries.getRange(1, 1, 1, HEADER.length).setValues([HEADER]);
     var rows = (data.entries || []).map(function (en) {
-      return [en.id, en.date, en.time, en.type, en.title, en.content, en.done];
+      return [en.id, en.date, en.time, en.type, en.title, en.content, en.done,
+              (en.photos || []).join('\n')];
     });
     if (rows.length) entries.getRange(2, 1, rows.length, HEADER.length).setValues(rows);
 
@@ -161,7 +167,19 @@ function doPost(e) {
     // 4. Закупки: применить изменения с телефона и вернуть реестр
     var purchases = syncPurchases_(ss, data.purchaseUpdates || []);
 
-    return json_({ ok: true, inbox: inbox, purchases: purchases });
+    // 5. Фото с телефона — в папку на Google Диске.
+    // Ошибка здесь не должна ломать синхронизацию записей: фото
+    // останется в телефоне и уедет при следующей попытке.
+    var photos = {};
+    try {
+      photos = savePhotos_(data.newPhotos);
+    } catch (photoErr) {
+      Logger.log('Фото пропущены: ' + photoErr);
+    }
+
+    return json_({
+      ok: true, inbox: inbox, purchases: purchases, photos: photos
+    });
   } catch (err) {
     return json_({ ok: false, error: String(err) });
   } finally {
@@ -181,11 +199,55 @@ function getSheet_(ss, name) {
   return sh;
 }
 
+// ═══ Фотографии ═══════════════════════════════════════════════
+// Снимки с телефона складываются в папку Google Диска, а в таблице
+// остаётся ссылка. В телефоне копия тоже сохраняется — браузер
+// не умеет показывать картинку с Диска напрямую.
+
+var PHOTO_FOLDER = 'Дневник — фото';
+
+function photoFolder_() {
+  var found = DriveApp.getFoldersByName(PHOTO_FOLDER);
+  return found.hasNext() ? found.next() : DriveApp.createFolder(PHOTO_FOLDER);
+}
+
+function savePhotos_(newPhotos) {
+  var out = {};
+  if (!newPhotos) return out;
+
+  var folder = null;
+  var stamp = Utilities.formatDate(
+      new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd_HH-mm-ss');
+
+  Object.keys(newPhotos).forEach(function (entryId) {
+    var list = newPhotos[entryId] || [];
+    out[entryId] = list.map(function (dataUrl, i) {
+      try {
+        var m = /^data:([^;]+);base64,([\s\S]*)$/.exec(String(dataUrl));
+        if (!m) return '';
+        if (!folder) folder = photoFolder_();
+        var blob = Utilities.newBlob(
+            Utilities.base64Decode(m[2]), m[1],
+            'фото_' + stamp + '_' + entryId + '_' + (i + 1) + '.jpg');
+        var file = folder.createFile(blob);
+        // Ссылка должна открываться и с рабочего компьютера
+        file.setSharing(DriveApp.Access.ANYONE_WITH_LINK,
+                        DriveApp.Permission.VIEW);
+        return 'https://drive.google.com/file/d/' + file.getId() + '/view';
+      } catch (err) {
+        Logger.log('Фото не сохранено: ' + err);
+        return '';
+      }
+    });
+  });
+  return out;
+}
+
 // ═══ Личный дневник ═══════════════════════════════════════════
 // Лист «Личное» — зеркало личного раздела приложения.
 // Рабочие записи туда не попадают и наоборот.
 
-var L_HEADER = ['id', 'Дата', 'Время', 'Метка', 'Заголовок', 'Текст'];
+var L_HEADER = ['id', 'Дата', 'Время', 'Метка', 'Заголовок', 'Текст', 'Фото'];
 
 function syncPersonal_(ss, rows) {
   var sh = ss.getSheetByName('Личное');
@@ -196,7 +258,8 @@ function syncPersonal_(ss, rows) {
   sh.getRange(1, 1, 1, L_HEADER.length).setValues([L_HEADER]);
   if (!rows.length) return;
   var values = rows.map(function (r) {
-    return [r.id, r.date, r.time, r.tag || '', r.title || '', r.content || ''];
+    return [r.id, r.date, r.time, r.tag || '', r.title || '', r.content || '',
+            (r.photos || []).join('\n')];
   });
   sh.getRange(2, 1, values.length, L_HEADER.length).setValues(values);
 }
