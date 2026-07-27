@@ -65,7 +65,7 @@ function doGet(e) {
   return json_({
     ok: true,
     message: 'Скрипт дневника работает',
-    version: 6,
+    version: 7,
     mailTo: myMailAlias_()
   });
 }
@@ -82,7 +82,7 @@ function doPost(e) {
     var inboxSheet = getSheet_(ss, 'Входящие');
     var archive = getSheet_(ss, 'Импортировано');
 
-    // 0. Забрать письма, пересланные на адрес с +zadachi.
+    // 0. Забрать письма: из папки «Работа» и пересланные на +zadachi.
     // Делается прямо здесь, чтобы не нужен был отдельный триггер:
     // нажали в телефоне «Синхронизировать» — почта тоже проверилась.
     // Ошибка почты не должна ломать синхронизацию записей.
@@ -173,7 +173,7 @@ function getSheet_(ss, name) {
     sh = ss.insertSheet(name);
     if (name === 'Входящие') sh.getRange(1, 1, 1, 3).setValues([['Текст', 'Заголовок', 'Тип']]);
     if (name === 'Импортировано') sh.getRange(1, 1, 1, 4).setValues([['Когда', 'Текст', 'Заголовок', 'Тип']]);
-    if (name === 'Письма') sh.getRange(1, 1, 1, 3).setValues([['Номер письма', 'Когда', 'Тема']]);
+    if (name === 'Письма') sh.getRange(1, 1, 1, 4).setValues([['Номер письма', 'Когда', 'Тема', 'Откуда']]);
     if (name === 'Закупки') sh.getRange(1, 1, 1, P_HEADER.length).setValues([P_HEADER]);
   }
   return sh;
@@ -291,6 +291,32 @@ function cellStr_(v) {
 
 var MAIL_TAG = 'zadachi';
 
+// Ярлык (папка) Gmail, письма из которого сами становятся задачами.
+// Если у вас он называется иначе — впишите своё название здесь.
+var WORK_LABEL = 'Работа';
+
+// Письма старше начала сегодняшнего дня не забираются, чтобы
+// накопленная папка разом не превратилась в сотню задач.
+function mailSince_() {
+  var props = PropertiesService.getScriptProperties();
+  var saved = props.getProperty('mailSince');
+  if (saved) return new Date(saved);
+  var now = new Date();
+  var startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  props.setProperty('mailSince', startOfToday.toISOString());
+  return startOfToday;
+}
+
+// Забрать письма и за прошлые дни: укажите, за сколько дней назад.
+// Выберите функцию в редакторе, поменяйте число и запустите.
+function takeMailForLastDays(days) {
+  var d = new Date();
+  d.setDate(d.getDate() - (days || 7));
+  PropertiesService.getScriptProperties()
+      .setProperty('mailSince', d.toISOString());
+  return checkMail();
+}
+
 // Запустите ОДИН РАЗ вручную (выбрать «setupMail» → Выполнить):
 // включает проверку почты каждые 10 минут.
 function setupMail() {
@@ -320,13 +346,26 @@ function checkMail() {
     Logger.log(m0);
     return m0;
   }
-  var added = processMail();
-  var msg = 'Пересылайте письма на адрес: ' + alias +
-      '\nНайдено новых писем: ' + added.found +
-      '\nДобавлено задач: ' + added.added;
-  if (added.found === 0) {
-    msg += '\n\nПисем не найдено. Проверьте, что вы переслали письмо ' +
-        'именно на ' + alias + ' и что оно уже дошло (обновите почту).';
+  var r = processMail();
+  var sinceText = Utilities.formatDate(
+      r.since, Session.getScriptTimeZone(), 'dd.MM.yyyy HH:mm');
+
+  var msg = 'Папка «' + WORK_LABEL + '»: ' +
+      (r.labelFound ? 'найдена, письма из неё забираются'
+                    : 'НЕ НАЙДЕНА — проверьте название папки в Gmail') +
+      '\nАдрес для пересылки: ' + alias +
+      '\nБерём письма начиная с: ' + sinceText +
+      '\nНайдено новых писем: ' + r.found +
+      '\nДобавлено задач: ' + r.added;
+
+  if (!r.labelFound) {
+    msg += '\n\nВ Gmail папка должна называться ровно «' + WORK_LABEL +
+        '». Если она называется иначе, впишите её название в самом верху ' +
+        'кода, в строке WORK_LABEL.';
+  } else if (r.found === 0) {
+    msg += '\n\nНовых писем нет. Письма старше ' + sinceText +
+        ' не берутся — так сделано, чтобы накопленная папка разом ' +
+        'не превратилась в сотню задач.';
   }
   Logger.log(msg);
   return msg;
@@ -334,7 +373,7 @@ function checkMail() {
 
 function processMail() {
   var alias = myMailAlias_();
-  if (!alias) return { found: 0, added: 0 };
+  var since = mailSince_();
 
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var inbox = getSheet_(ss, 'Входящие');
@@ -349,15 +388,31 @@ function processMail() {
     });
   }
 
-  // deliveredto: — единственный оператор Gmail, который надёжно
-  // находит письма по адресу с плюсом.
-  var query = 'deliveredto:' + alias + ' newer_than:30d';
-  var threads = [];
+  // Источник 1 — папка (ярлык) «Работа».
+  // Берём через getUserLabelByName, а не через поиск label:Работа —
+  // русские названия ярлыков в поисковых запросах Gmail ненадёжны,
+  // именно на этом всё и ломалось раньше.
+  var labelThreads = [];
+  var labelFound = false;
   try {
-    threads = GmailApp.search(query, 0, 50);
+    var label = GmailApp.getUserLabelByName(WORK_LABEL);
+    if (label) {
+      labelFound = true;
+      labelThreads = label.getThreads(0, 50);
+    }
   } catch (err) {
-    Logger.log('Ошибка поиска почты: ' + err);
-    return { found: 0, added: 0 };
+    Logger.log('Ярлык не прочитан: ' + err);
+  }
+
+  // Источник 2 — письма, пересланные на адрес с +zadachi.
+  var aliasThreads = [];
+  if (alias) {
+    try {
+      aliasThreads = GmailApp.search(
+          'deliveredto:' + alias + ' newer_than:30d', 0, 50);
+    } catch (err) {
+      Logger.log('Ошибка поиска почты: ' + err);
+    }
   }
 
   var found = 0;
@@ -365,31 +420,43 @@ function processMail() {
   var stamp = Utilities.formatDate(
       new Date(), Session.getScriptTimeZone(), 'dd.MM.yyyy HH:mm');
 
-  threads.forEach(function (th) {
+  function take_(msg, source) {
+    var id = msg.getId();
+    if (seen[id]) return;
+    if (msg.getDate() < since) return;
+    found++;
+
+    var subject = msg.getSubject() || '';
+    subject = subject.replace(/^((re|fw|fwd|пересл\w*)\s*:\s*)+/i, '').trim();
+    if (!subject) subject = '(письмо без темы)';
+    var from = (msg.getFrom() || '').replace(/\s*<[^>]*>\s*/, '').trim();
+    var body = (msg.getPlainBody() || '').replace(/\s+/g, ' ').trim();
+    if (body.length > 300) body = body.slice(0, 300) + '…';
+    var link = 'https://mail.google.com/mail/u/0/#all/' + id;
+    var text = (from ? 'От: ' + from + ' | ' : '') + (body || subject) +
+        ' | Письмо: ' + link;
+
+    // Тип «Почта» — приложение сделает из строки задачу
+    // и покажет её в отдельном списке «Почта».
+    inbox.appendRow([text, subject, 'Почта']);
+    seenSheet.appendRow([id, stamp, subject, source]);
+    seen[id] = true;
+    added++;
+  }
+
+  labelThreads.forEach(function (th) {
+    th.getMessages().forEach(function (msg) { take_(msg, WORK_LABEL); });
+  });
+
+  aliasThreads.forEach(function (th) {
     th.getMessages().forEach(function (msg) {
-      var id = msg.getId();
-      if (seen[id]) return;
-      // письма, отправленные не на этот адрес, пропускаем
       var to = (msg.getTo() + ' ' + msg.getCc()).toLowerCase();
       if (to.indexOf(alias.toLowerCase()) === -1) return;
-      found++;
-
-      var subject = msg.getSubject() || '';
-      subject = subject.replace(/^((re|fw|fwd|пересл\w*)\s*:\s*)+/i, '').trim();
-      if (!subject) subject = '(письмо без темы)';
-      var body = (msg.getPlainBody() || '').replace(/\s+/g, ' ').trim();
-      if (body.length > 300) body = body.slice(0, 300) + '…';
-      var link = 'https://mail.google.com/mail/u/0/#all/' + id;
-      var text = subject + (body ? ' | ' + body : '') + ' | Письмо: ' + link;
-
-      inbox.appendRow([text, subject, 'Задача']);
-      seenSheet.appendRow([id, stamp, subject]);
-      seen[id] = true;
-      added++;
+      take_(msg, '+' + MAIL_TAG);
     });
   });
 
-  return { found: found, added: added };
+  return { found: found, added: added, labelFound: labelFound, since: since };
 }
 
 function json_(obj) {
