@@ -65,7 +65,7 @@ function doGet(e) {
   return json_({
     ok: true,
     message: 'Скрипт дневника работает',
-    version: 7,
+    version: 8,
     mailTo: myMailAlias_()
   });
 }
@@ -88,6 +88,8 @@ function doPost(e) {
     // Ошибка почты не должна ломать синхронизацию записей.
     try {
       processMail();
+      // Дописанные строки должны быть видны следующему чтению листа.
+      SpreadsheetApp.flush();
     } catch (mailErr) {
       Logger.log('Почта пропущена: ' + mailErr);
     }
@@ -338,6 +340,39 @@ function myMailAlias_() {
 // ПРОВЕРКА. Выберите «checkMail» → Выполнить → внизу откроется
 // журнал выполнения, там будет написано простым текстом,
 // что нашлось и что добавилось.
+// Вернуть письма из архива обратно в «Входящие».
+// Нужна, если письма уже уехали в лист «Импортировано», а в дневник
+// не попали. Укажите, за сколько последних дней вернуть.
+// Письма, которые в дневнике уже есть, повторно не заведутся —
+// приложение узнаёт их по ссылке на Gmail.
+function restoreMailFromArchive(days) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var archive = ss.getSheetByName('Импортировано');
+  var inbox = getSheet_(ss, 'Входящие');
+  if (!archive || archive.getLastRow() < 2) {
+    Logger.log('Архив пуст — возвращать нечего.');
+    return 'Архив пуст — возвращать нечего.';
+  }
+
+  var since = new Date();
+  since.setDate(since.getDate() - (days || 1));
+
+  var rows = archive.getRange(2, 1, archive.getLastRow() - 1, 4).getValues();
+  var back = 0;
+  rows.forEach(function (r) {
+    var when = r[0] instanceof Date ? r[0] : new Date(r[0]);
+    if (!(when >= since)) return;
+    if (String(r[3]).toLowerCase() !== 'почта') return;
+    inbox.appendRow([r[1], r[2], 'Почта']);
+    back++;
+  });
+
+  var msg = 'Возвращено писем в «Входящие»: ' + back +
+      '\nТеперь нажмите в дневнике «Синхронизировать сейчас».';
+  Logger.log(msg);
+  return msg;
+}
+
 function checkMail() {
   var alias = myMailAlias_();
   if (!alias) {
